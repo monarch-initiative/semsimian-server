@@ -2,7 +2,6 @@
 // TODO:
 // - Initialize RustSemsimian object once and pass it to the compare_termsets function
 // - Implement Serialize for RustSemsimian structs so that we can return it from the compare_termsets function
-// - it's only grabbing the first term from each termset right now, need to fix that
 
 //--- IMPORTS ---//
 use std::{collections::HashSet, path::PathBuf};
@@ -21,15 +20,15 @@ use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity;
 use semsimian::{Predicate, RustSemsimian, TermID};
 
 //--- STRUCTS ---//
-struct TSPS(TermsetPairwiseSimilarity);
+struct Tsps(TermsetPairwiseSimilarity);
 
 // Semsimian doesn't have a Serialize implementation for TermsetPairwiseSimilarity
-impl Serialize for TSPS {
+impl Serialize for Tsps {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("TSPS", 9)?;
+        let mut state = serializer.serialize_struct("Tsps", 9)?;
         state.serialize_field("subject_termset", &self.0.subject_termset)?;
         state.serialize_field("subject_best_matches", &self.0.subject_best_matches)?;
         state.serialize_field(
@@ -51,8 +50,7 @@ impl Serialize for TSPS {
 
 
 #[get("/compare/<termset1>/<termset2>")]
-// #[get("/compare")]
-fn compare_termsets(termset1: String, termset2: String) -> Json<TSPS> {
+fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     // Compare two termsets, each represented as a comma-separated set of term IDs
     // Return a TermsetPairwiseSimilarity object
 
@@ -76,12 +74,10 @@ fn compare_termsets(termset1: String, termset2: String) -> Json<TSPS> {
     rss.update_closure_and_ic_map();
 
     // split termset1 and termset2 into vectors of TermIDs
-
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(",") {
         terms1.insert(term.to_string());
-    };
-    
+    }; 
     let mut terms2: HashSet<TermID> = HashSet::new();
     for term in termset2.split(",") {
         terms2.insert(term.to_string());
@@ -89,7 +85,7 @@ fn compare_termsets(termset1: String, termset2: String) -> Json<TSPS> {
     println!("Termset 1: {:?}", terms1);
     println!("Termset 2: {:?}", terms2);
     let result = rss.termset_pairwise_similarity(&terms1, &terms2, &None);
-    Json(TSPS(result))
+    Json(Tsps(result))
 }
 
 // this is our get route which will be requested at the "/" location wherever it is mounted

@@ -1544,6 +1544,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 [[package]]
 name = "semsimian"
 version = "0.2.4"
+source = "git+https://github.com/monarch-initiative/semsimian.git?branch=main#610d7bcb92873e11ded589f25188a58c95fbd28c"
 dependencies = [
  "cargo-llvm-cov",
  "csv",
