@@ -76,14 +76,18 @@ fn compare_termsets(termset1: String, termset2: String) -> Json<TSPS> {
     rss.update_closure_and_ic_map();
 
     // split termset1 and termset2 into vectors of TermIDs
-    let terms1: HashSet<TermID> = HashSet::from([
-        termset1.split(",").collect::<Vec<&str>>()[0].to_string()
-    ]);
 
-    let terms2: HashSet<TermID> = HashSet::from([
-        termset2.split(",").collect::<Vec<&str>>()[0].to_string()
-    ]);
-
+    let mut terms1: HashSet<TermID> = HashSet::new();
+    for term in termset1.split(",") {
+        terms1.insert(term.to_string());
+    };
+    
+    let mut terms2: HashSet<TermID> = HashSet::new();
+    for term in termset2.split(",") {
+        terms2.insert(term.to_string());
+    };
+    println!("Termset 1: {:?}", terms1);
+    println!("Termset 2: {:?}", terms2);
     let result = rss.termset_pairwise_similarity(&terms1, &terms2, &None);
     Json(TSPS(result))
 }
