@@ -1,5 +1,6 @@
 //--- IMPORTS ---//
 use std::{collections::HashSet, path::PathBuf};
+// use log::{info, warn, error, debug};
 
 // this lets us use the #[get] macro etc.
 #[macro_use]
@@ -87,7 +88,10 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     for term in termset2.split(",") {
         terms2.insert(term.to_string());
     }
+    info!("Comparing termsets:\
+        \n\tTermset 1: {:?}\
+        \n\tTermset 2: {:?}\
+        \n", terms1, terms2);
     let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
     Json(Tsps(result))
 }
-
