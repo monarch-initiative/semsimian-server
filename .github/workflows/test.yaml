@@ -13,7 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Install and Test
-        run: |
-          cargo install
+      - run: |
+          cargo build
           cargo test
