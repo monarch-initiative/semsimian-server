@@ -3,8 +3,6 @@
 #[macro_use]
 extern crate rocket;
 
-use lazy_static::lazy_static;
-use semsimian::RustSemsimian;
 use semsimian_server::{compare_termsets, say_hello};
 
 #[launch]
