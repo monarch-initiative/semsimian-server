@@ -87,8 +87,6 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     for term in termset2.split(",") {
         terms2.insert(term.to_string());
     }
-    println!("Termset 1: {:?}", terms1);
-    println!("Termset 2: {:?}", terms2);
     let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
     Json(Tsps(result))
 }
