@@ -12,5 +12,6 @@ port = 9000
 
 ## set only when compiled in release mode, i.e, `cargo build --release`
 [release]
+address = "0.0.0.0"
 port = 9999
 ip_header = false

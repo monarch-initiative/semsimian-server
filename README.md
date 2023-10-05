@@ -38,3 +38,16 @@ The server exposes two endpoints:
     - `termset` is a comma-separated list of ontology terms.
     - `prefix` is a string that will be used to filter the results.
     - The server will return a JSON object containing a list of ontology terms that match the search term and prefix.
+
+__**Docker Image**__
+
+A Dockerfile is provided for convenience. 
+To build the image, run the following command from the root of the repository:
+```bash
+docker build -t semsimian-server .
+```
+
+To run the image, run the following command:
+```bash
+docker run -p 9999:9999 semsimian-server
+```
