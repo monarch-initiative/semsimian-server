@@ -34,4 +34,7 @@ The server exposes two endpoints:
     - `termset1` and `termset2` are comma-separated lists of ontology terms.
     - The server will return a JSON object containing the similarity score between the two termsets.
 
-- 
+- `/search/<termset>/<prefix>`  
+    - `termset` is a comma-separated list of ontology terms.
+    - `prefix` is a string that will be used to filter the results.
+    - The server will return a JSON object containing a list of ontology terms that match the search term and prefix.
