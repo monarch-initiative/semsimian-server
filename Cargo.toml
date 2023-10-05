@@ -12,3 +12,4 @@ semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branc
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
 serde = "*"
 chrono = "0.4.31"
+lazy_static = { version = "1.4.0", features = [] }
