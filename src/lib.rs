@@ -1,8 +1,3 @@
-// This is a simple web server that uses the semsimian crate to compare two sets of terms
-// TODO:
-// - Initialize RustSemsimian object once and pass it to the compare_termsets function
-// - Implement Serialize for RustSemsimian structs so that we can return it from the compare_termsets function
-
 //--- IMPORTS ---//
 use std::{collections::HashSet, path::PathBuf};
 
@@ -11,14 +6,14 @@ use std::{collections::HashSet, path::PathBuf};
 extern crate rocket;
 
 // this lets us return JSON from our routes
-use rocket::serde::json::Json; 
+use lazy_static::lazy_static;
+use rocket::serde::json::Json;
+use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity;
+use semsimian::{Predicate, RustSemsimian, TermID};
 use serde::{
     ser::{SerializeStruct, Serializer},
     Serialize,
 };
-use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity;
-use semsimian::{Predicate, RustSemsimian, TermID};
-use lazy_static::lazy_static;
 
 //--- STRUCTS ---//
 struct Tsps(TermsetPairwiseSimilarity);
@@ -62,11 +57,11 @@ fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(",") {
         terms1.insert(term.to_string());
-    }; 
+    }
     let mut terms2: HashSet<TermID> = HashSet::new();
     for term in termset2.split(",") {
         terms2.insert(term.to_string());
-    };
+    }
     println!("Termset 1: {:?}", terms1);
     println!("Termset 2: {:?}", terms2);
     let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &None);
@@ -103,11 +98,13 @@ fn say_hello() -> &'static str {
 // start the web server and mount our get route at "/api". Can replace /api with anything
 // or just leave it as "/" as the default location
 #[launch]
-fn rocket() -> _ {
+pub fn rocket() -> _ {
     // run a first compare to warm up the RustSemsimian instance
     RSS.termset_pairwise_similarity(
         &HashSet::from(["MP:0010771".to_string()]),
         &HashSet::from(["HP:0004325".to_string()]),
-        &None,);
+        &None,
+    );
     rocket::build().mount("/", routes![say_hello, compare_termsets])
 }
+
