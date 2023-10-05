@@ -93,13 +93,3 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     Json(Tsps(result))
 }
 
-//--- Run Server ---//
-#[launch]
-fn rocket() -> _ {
-    // run a first compare to warm up the RustSemsimian instance
-    RSS.termset_pairwise_similarity(
-        &HashSet::from(["MP:0010771".to_string()]),
-        &HashSet::from(["HP:0004325".to_string()]),
-    );
-    rocket::build().mount("/", routes![say_hello, compare_termsets])
-}
