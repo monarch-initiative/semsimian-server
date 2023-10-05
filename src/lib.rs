@@ -89,7 +89,7 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
     }
     println!("Termset 1: {:?}", terms1);
     println!("Termset 2: {:?}", terms2);
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &None);
+    let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
     Json(Tsps(result))
 }
 
@@ -100,7 +100,6 @@ fn rocket() -> _ {
     RSS.termset_pairwise_similarity(
         &HashSet::from(["MP:0010771".to_string()]),
         &HashSet::from(["HP:0004325".to_string()]),
-        &None,
     );
     rocket::build().mount("/", routes![say_hello, compare_termsets])
 }

@@ -19,7 +19,6 @@ pub fn rocket() -> _ {
     RSS.termset_pairwise_similarity(
         &HashSet::from(["MP:0010771".to_string()]),
         &HashSet::from(["HP:0004325".to_string()]),
-        &None,
     );
     rocket::build().mount("/", routes![say_hello, compare_termsets])
 }
