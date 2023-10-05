@@ -2,13 +2,19 @@
 name = "semsimian_server"
 version = "0.1.0"
 edition = "2021"
-# path = "src"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "semsimian_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "semserver"
+path = "src/bin.rs"
 
 [dependencies]
 # semsimian = "*"
-semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "main" }
+semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "search" }
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
 serde = "*"
 chrono = "0.4.31"
