@@ -16,7 +16,7 @@ use serde::{
 };
 
 //--- STRUCTS ---//
-struct Tsps(TermsetPairwiseSimilarity);
+pub struct Tsps(TermsetPairwiseSimilarity);
 
 // Semsimian doesn't have a Serialize implementation for TermsetPairwiseSimilarity
 impl Serialize for Tsps {
@@ -44,31 +44,8 @@ impl Serialize for Tsps {
     }
 }
 
-lazy_static! {
-    static ref RSS: RustSemsimian = get_rss_instance();
-}
-
-#[get("/compare/<termset1>/<termset2>")]
-fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
-    // Compare two termsets, each represented as a comma-separated set of term IDs
-    // Return a TermsetPairwiseSimilarity object
-
-    // split termset1 and termset2 into vectors of TermIDs
-    let mut terms1: HashSet<TermID> = HashSet::new();
-    for term in termset1.split(",") {
-        terms1.insert(term.to_string());
-    }
-    let mut terms2: HashSet<TermID> = HashSet::new();
-    for term in termset2.split(",") {
-        terms2.insert(term.to_string());
-    }
-    println!("Termset 1: {:?}", terms1);
-    println!("Termset 2: {:?}", terms2);
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &None);
-    Json(Tsps(result))
-}
-
-fn get_rss_instance() -> RustSemsimian {
+// Get a RustSemsimian instance
+pub fn get_rss_instance() -> RustSemsimian {
     let mut db_path = PathBuf::new();
     if let Some(home) = std::env::var_os("HOME") {
         db_path.push(home);
@@ -89,16 +66,36 @@ fn get_rss_instance() -> RustSemsimian {
     rss
 }
 
-// this is our get route which will be requested at the "/" location wherever it is mounted
+lazy_static! {
+    static ref RSS: RustSemsimian = get_rss_instance();
+}
+
+//--- ROUTES ---//
 #[get("/")]
-fn say_hello() -> &'static str {
+pub fn say_hello() -> &'static str {
     "Semsimian Server Online"
 }
 
-// start the web server and mount our get route at "/api". Can replace /api with anything
-// or just leave it as "/" as the default location
+#[get("/compare/<termset1>/<termset2>")]
+pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
+    // split termset1 and termset2 into vectors of TermIDs
+    let mut terms1: HashSet<TermID> = HashSet::new();
+    for term in termset1.split(",") {
+        terms1.insert(term.to_string());
+    }
+    let mut terms2: HashSet<TermID> = HashSet::new();
+    for term in termset2.split(",") {
+        terms2.insert(term.to_string());
+    }
+    println!("Termset 1: {:?}", terms1);
+    println!("Termset 2: {:?}", terms2);
+    let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &None);
+    Json(Tsps(result))
+}
+
+//--- Run Server ---//
 #[launch]
-pub fn rocket() -> _ {
+fn rocket() -> _ {
     // run a first compare to warm up the RustSemsimian instance
     RSS.termset_pairwise_similarity(
         &HashSet::from(["MP:0010771".to_string()]),
@@ -107,4 +104,3 @@ pub fn rocket() -> _ {
     );
     rocket::build().mount("/", routes![say_hello, compare_termsets])
 }
-
