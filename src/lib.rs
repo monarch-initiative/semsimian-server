@@ -9,7 +9,9 @@ extern crate rocket;
 // this lets us return JSON from our routes
 use lazy_static::lazy_static;
 use rocket::serde::json::Json;
+use rocket::State;
 use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity;
+use semsimian::enums::SearchTypeEnum;
 use semsimian::{Predicate, RustSemsimian, TermID};
 use serde::{
     ser::{SerializeStruct, Serializer},
@@ -17,6 +19,10 @@ use serde::{
 };
 
 //--- STRUCTS ---//
+pub struct ApiConfig {
+    pub thing: String,
+    pub rss: RustSemsimian
+}
 pub struct Tsps(TermsetPairwiseSimilarity);
 
 // Semsimian doesn't have a Serialize implementation for TermsetPairwiseSimilarity
@@ -67,9 +73,10 @@ pub fn get_rss_instance() -> RustSemsimian {
     rss
 }
 
-lazy_static! {
-    static ref RSS: RustSemsimian = get_rss_instance();
-}
+// lazy_static! {
+// //    static ref RSS: Arc<Mutex<Option<RustSemsimian>>> = Arc::new(Mutex::new(get_rss_instance()));
+//     static ref RSS: RustSemsimian = get_rss_instance();
+// }
 
 //--- ROUTES ---//
 #[get("/")]
@@ -78,7 +85,7 @@ pub fn say_hello() -> &'static str {
 }
 
 #[get("/compare/<termset1>/<termset2>")]
-pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
+pub fn compare_termsets(termset1: String, termset2: String, config: &State<ApiConfig>) -> Json<Tsps> {
     // split termset1 and termset2 into vectors of TermIDs
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(",") {
@@ -92,6 +99,33 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
         \n\tTermset 1: {:?}\
         \n\tTermset 2: {:?}\
         \n", terms1, terms2);
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
+    let result = config.rss.termset_pairwise_similarity(&terms1, &terms2);
     Json(Tsps(result))
 }
+
+#[get("/search/<termset>/<prefixes>")]
+pub fn search(termset: String, prefixes: String, config: &State<ApiConfig>) -> &'static str {
+    let mut terms: HashSet<TermID> = HashSet::new();
+    for term in termset.split(",") {
+        terms.insert(term.to_string());
+    }
+    let mut prefix_vec: Vec<TermID> = Vec::new();
+    for prefix in prefixes.split(",") {
+        prefix_vec.push(prefix.to_string());
+    }
+
+    let association_predicates: HashSet<TermID> = HashSet::from([
+        "biolink:has_phenotype".to_string()
+    ]);
+
+
+    let result = config.rss.associations_search(&association_predicates,
+                                         &terms,
+                                         true,
+                                         &None,
+                                         &Some(prefix_vec),
+                                         &SearchTypeEnum::Hybrid,
+                                         Some(10));
+    "it worked, trust me"
+}
+
