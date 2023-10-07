@@ -41,7 +41,9 @@ The server exposes two endpoints:
 
 __**Docker Image**__
 
-A Dockerfile is provided for convenience. 
+A Dockerfile is provided for convenience. While it is hosted on [Google Cloud Platform](us-central1-docker.pkg.dev/monarch-initiative/monarch-api/semsimian-server:latest),  
+it can be built locally.
+
 To build the image, run the following command from the root of the repository:
 ```bash
 docker build -t semsimian-server .
