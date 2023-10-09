@@ -6,10 +6,9 @@ use std::{collections::HashSet};
 use lazy_static::lazy_static;
 use rocket::serde::json::Json;
 use semsimian::{RustSemsimian, TermID};
-use structs::Tsps;
+use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity as Tsps;
 use utils::get_rss_instance;
 
-pub mod structs;
 pub mod utils;
 
 lazy_static! {
@@ -41,5 +40,5 @@ pub fn compare_termsets(termset1: String, termset2: String) -> Json<Tsps> {
         terms1, terms2
     );
     let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
-    Json(Tsps(result))
+    Json(result)
 }
