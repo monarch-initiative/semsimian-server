@@ -13,10 +13,9 @@ name = "semserver"
 path = "src/bin.rs"
 
 [dependencies]
-# semsimian = "*"
-# semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "search" }
-semsimian = { git = "https://github.com/glass-ships/semsimian.git", branch = "macro-tsps" }
+# semsimian = ">=0.2.10"
+semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "main" }
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
 serde = "*"
-chrono = "0.4.31"
-lazy_static = { version = "1.4.0", features = [] }
+chrono = ">=0.4.31"
+lazy_static = { version = ">=1.4.0", features = [] }
