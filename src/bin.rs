@@ -7,6 +7,5 @@ use semsimian_server::{compare_termsets, say_hello};
 
 #[launch]
 pub fn rocket() -> _ {
-    compare_termsets("MP:0010771".to_string(), "HP:0004325".to_string());
     rocket::build().mount("/", routes![say_hello, compare_termsets])
 }
