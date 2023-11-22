@@ -1,8 +1,8 @@
-use semsimian::{Predicate, RustSemsimian, TermID};
 use semsimian::enums::SearchTypeEnum;
+use semsimian::{Predicate, RustSemsimian, TermID};
 // use std::path::{Path, PathBuf};
-use std::path::{PathBuf};
 use std::collections::HashSet;
+use std::path::PathBuf;
 
 // Check for phenio.db in ~/.data/oaklib, download if not present
 // const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
@@ -23,7 +23,7 @@ use std::collections::HashSet;
 //     }
 // }
 
-// Get a RustSemsimian instance, ensure phenio.db 
+// Get a RustSemsimian instance, ensure phenio.db
 pub fn get_rss_instance() -> RustSemsimian {
     let mut db_path = PathBuf::new();
     if let Some(home) = std::env::var_os("HOME") {
