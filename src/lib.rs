@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
-use std::{collections::HashSet};
+use std::collections::HashSet;
 
 use lazy_static::lazy_static;
 use rocket::serde::json::Json;
-use semsimian::{RustSemsimian, TermID};
 use semsimian::termset_pairwise_similarity::TermsetPairwiseSimilarity as Tsps;
+use semsimian::{RustSemsimian, TermID};
 use utils::get_rss_instance;
 
 pub mod utils;
