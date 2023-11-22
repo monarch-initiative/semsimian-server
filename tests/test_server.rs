@@ -14,7 +14,7 @@ fn test_compare() {
     let response = compare_termsets("MP:0010771".to_string(), "HP:0004325".to_string());
     let tsps = &response.0;
     let integument_phenotype = "MP:0010771";
-    let expected_first_match = String::from("match_type");
+    let expected_first_match = String::from("match_source");
     // dbg!(&tsps);
     assert_eq!(
         tsps.subject_termset[0].keys().next().unwrap(),
