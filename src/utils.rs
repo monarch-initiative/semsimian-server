@@ -1,5 +1,7 @@
-use semsimian::{Predicate, RustSemsimian};
+use semsimian::{Predicate, RustSemsimian, TermID};
+use semsimian::enums::SearchTypeEnum;
 use std::path::{Path, PathBuf};
+use std::collections::HashSet;
 
 // Check for phenio.db in ~/.data/oaklib, download if not present
 // const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
@@ -38,7 +40,10 @@ pub fn get_rss_instance() -> RustSemsimian {
         // "UPHENO:0000001".to_string(),
     ]);
 
+    let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
+
     let mut rss = RustSemsimian::new(None, predicates, None, db);
-    rss.update_closure_and_ic_map();
+    // rss.update_closure_and_ic_map();
+    rss.pregenerate_cache(&assoc_predicate, &SearchTypeEnum::Flat);
     rss
 }
