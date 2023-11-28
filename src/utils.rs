@@ -3,6 +3,7 @@ use semsimian::{Predicate, RustSemsimian, TermID};
 // use std::path::{Path, PathBuf};
 use std::collections::HashSet;
 use std::path::PathBuf;
+use std::sync::Mutex;
 
 // Check for phenio.db in ~/.data/oaklib, download if not present
 // const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
@@ -42,8 +43,19 @@ pub fn get_rss_instance() -> RustSemsimian {
     ]);
 
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
+    let rss = Mutex::new(Some(RustSemsimian::new(None, predicates, None, db)));
 
-    let mut rss = RustSemsimian::new(None, predicates, None, db);
-    rss.pregenerate_cache(&assoc_predicate, &SearchTypeEnum::Flat);
-    rss
+    {
+        let mut locked_rss = rss.lock().unwrap();
+        if let Some(rss_instance) = locked_rss.as_mut() {
+            rss_instance.pregenerate_cache(&assoc_predicate, &SearchTypeEnum::Flat);
+        }
+    }
+
+    // Take the RustSemsimian instance out of the Mutex
+    let mut guard = rss.lock().unwrap();
+    let rss_instance: Option<RustSemsimian> = guard.take();
+
+    // Now rss_instance is an Option<RustSemsimian>
+    rss_instance.unwrap()
 }
