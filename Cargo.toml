@@ -14,7 +14,7 @@ path = "src/bin.rs"
 
 [dependencies]
 # semsimian = ">=0.2.10"
-semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "precalculate-cache" }
+semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "main" }
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
 serde = "*"
 chrono = ">=0.4.31"
