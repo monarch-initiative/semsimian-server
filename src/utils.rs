@@ -22,6 +22,8 @@ use std::sync::Mutex;
 //         let mut out = std::fs::File::create(&db_path).expect("Failed to create phenio.db");
 //         std::io::copy(&mut resp, &mut out).expect("Failed to write phenio.db");
 //     }
+//     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
+//     return db; 
 // }
 
 // Get a RustSemsimian instance, ensure phenio.db
@@ -33,8 +35,8 @@ pub fn get_rss_instance() -> RustSemsimian {
     } else {
         panic!("Failed to get home directory");
     }
-    // check_for_phenio();
     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
+    // let db = check_for_phenio();
 
     let predicates: Option<Vec<Predicate>> = Some(vec![
         "rdfs:subClassOf".to_string(),
