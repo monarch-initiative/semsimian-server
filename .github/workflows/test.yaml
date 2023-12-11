@@ -16,3 +16,4 @@ jobs:
       - run: |
           cargo build
           cargo test test_compare -- --nocapture
+          cargo test test_search -- --nocapture
