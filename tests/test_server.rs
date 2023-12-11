@@ -30,6 +30,6 @@ fn test_search() {
     let _response = search(
         &*"HP:0000001,HP:0000002".to_string(),
         &*"ZFIN".to_string(),
-        1,
+        Some(1),
     );
 }
