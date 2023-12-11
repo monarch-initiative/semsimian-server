@@ -29,7 +29,10 @@ use std::sync::Mutex;
 // Get a RustSemsimian instance, ensure phenio.db
 pub fn get_rss_instance() -> RustSemsimian {
     let mut db_path = PathBuf::new();
-    if let Some(home) = std::env::var_os("HOME") {
+    //if PHENIO_PATH is in the environment, use that as db_path, else use ~/.data/oaklib/phenio.db
+    if let Some(phenio_path) = std::env::var_os("PHENIO_PATH") {
+        db_path.push(phenio_path);
+    } else if let Some(home) = std::env::var_os("HOME") {
         db_path.push(home);
         db_path.push(".data/oaklib/phenio.db");
     } else {
@@ -40,8 +43,6 @@ pub fn get_rss_instance() -> RustSemsimian {
 
     let predicates: Option<Vec<Predicate>> = Some(vec![
         "rdfs:subClassOf".to_string(),
-        // "BFO:0000050".to_string(),
-        // "UPHENO:0000001".to_string(),
     ]);
 
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
