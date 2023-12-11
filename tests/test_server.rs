@@ -33,5 +33,5 @@ fn test_compare() {
     assert_eq!(first_match, &expected_first_match);
 }
 
-// #[test]
-// fn test_search() {}
+#[test]
+fn test_search() {}
