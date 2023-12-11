@@ -27,10 +27,9 @@ fn test_compare() {
 
 #[test]
 fn test_search() {
-    let response = search(
+    let _response = search(
         &*"HP:0000001,HP:0000002".to_string(),
         &*"ZFIN".to_string(),
         1,
     );
-    dbg!(&response);
 }
