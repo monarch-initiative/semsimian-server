@@ -12,7 +12,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download Phenio
+        run: |
+          mkdir -p ~/.data/oaklib
+          wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
+          gunzip ~/.data/oaklib/phenio.db.gz
       
-      - run: |
+      - name: Run Tests
+        run: |
           cargo build
-          cargo test test_compare -- --nocapture
+          cargo test test_compare test_search -- --nocapture
