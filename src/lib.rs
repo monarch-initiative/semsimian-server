@@ -52,7 +52,7 @@ pub fn compare_termsets(termset1: &str, termset2: &str) -> Json<Tsps> {
 pub fn search(
     termset: &str,
     prefix: &str,
-    limit: usize, // Option<usize>,
+    limit: Option<usize>,
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let subject_prefixes: Option<Vec<TermID>> = Some(vec![prefix.to_string()]);
@@ -63,6 +63,7 @@ pub fn search(
         object_terms.insert(term.to_string());
     }
     let search_type: SearchTypeEnum = SearchTypeEnum::Hybrid;
+    let limit: usize = limit.unwrap_or(10);
 
     // Call the function under test
     let result = RSS_MUTEX.lock().unwrap().associations_search(
