@@ -1,12 +1,4 @@
-// import funcions from src/main.rs
-
-use semsimian_server::{compare_termsets, say_hello};
-
-// test say_hello function
-#[test]
-fn test_run() {
-    assert_eq!(say_hello(), "Semsimian Server Online");
-}
+use semsimian_server::{compare_termsets, search};
 
 // test compare_termsets function
 #[test]
@@ -34,4 +26,11 @@ fn test_compare() {
 }
 
 #[test]
-fn test_search() {}
+fn test_search() {
+    let response = search(
+        &*"HP:0000001,HP:0000002".to_string(),
+        &*"ZFIN".to_string(),
+        1,
+    );
+    dbg!(&response);
+}
