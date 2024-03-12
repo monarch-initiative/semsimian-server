@@ -1,9 +1,10 @@
 name: Test SemSimian Server
 on:
   push:
-    branches: [ main ]
+    # run on main and pin_38 branches
+    branches: [ main, pin_38 ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, pin_38 ]
 
 jobs:
   test:
