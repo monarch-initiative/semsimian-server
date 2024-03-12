@@ -6,12 +6,12 @@ use std::sync::Mutex;
 
 use lazy_static::lazy_static;
 use rocket::serde::json::Json;
-use semsimian::enums::SearchTypeEnum;
 use semsimian::enums::MetricEnum;
+use semsimian::enums::SearchTypeEnum;
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps, TermsetPairwiseSimilarity,
 };
-use semsimian::{Metric, RustSemsimian, TermID};
+use semsimian::{RustSemsimian, TermID};
 
 use utils::get_rss_instance;
 pub mod utils;
@@ -28,7 +28,7 @@ pub fn say_hello() -> &'static str {
 }
 
 #[get("/compare/<termset1>/<termset2>/<metric>")]
-pub fn compare_termsets(termset1: &str, termset2: &str, metric: &MetricEnum) -> Json<Tsps> {
+pub fn compare_termsets(termset1: &str, termset2: &str, metric: &str) -> Json<Tsps> {
     // split termset1 and termset2 into vectors of TermIDs
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(",") {
@@ -45,7 +45,9 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: &MetricEnum) -> 
         \n",
         terms1, terms2
     );
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &metric);
+    let metric: MetricEnum = MetricEnum::from_string(&Some(metric)).unwrap();
+    let result =
+        RSS.termset_pairwise_similarity(&terms1, &terms2, &metric);
     Json(result)
 }
 
@@ -76,8 +78,8 @@ pub fn search(
         &subject_prefixes,
         &search_type,
         // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
-        &MetricEnum::from_string(metric).unwrap_or(MetricEnum::AncestorInformationContent),
-        Some(limit)
+        &MetricEnum::from_string(&Some(metric)).unwrap_or(MetricEnum::AncestorInformationContent),
+        Some(limit),
     );
     println!("Result - {:?}", result);
 
