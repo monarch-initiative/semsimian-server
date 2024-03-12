@@ -27,7 +27,6 @@ jobs:
 
       - name: Run Tests
         run: |
-          export PYO3_PYTHON=python3.8 # Ensure this matches the Python version set up above
           cargo build
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
