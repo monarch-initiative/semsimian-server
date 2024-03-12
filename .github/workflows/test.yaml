@@ -1,9 +1,9 @@
 name: Test SemSimian Server
 on:
   push:
-    branches: [ main, fix_gh_actions ]
+    branches: [ main, fix_gh_actions, test_build ]
   pull_request:
-    branches: [ main, fix_gh_actions ]
+    branches: [ main, fix_gh_actions, test_build ]
 
 jobs:
   test:
