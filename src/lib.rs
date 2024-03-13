@@ -45,7 +45,7 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: &str) -> Json<Ts
         \n",
         terms1, terms2
     );
-    let metric: MetricEnum = MetricEnum::from_string(&Some(metric)).unwrap();
+    let metric: MetricEnum = MetricEnum::from_string(&Some(metric)).unwrap_or(MetricEnum::AncestorInformationContent);
     let result =
         RSS.termset_pairwise_similarity(&terms1, &terms2, &metric);
     Json(result)
