@@ -1,9 +1,9 @@
 name: Test SemSimian Server
 on:
   push:
-    branches: [ main ]
+    branches: [ main pin_to_py38 ]
   pull_request:
-    branches: [ main ]
+    branches: [ main pin_to_py38 ]
 
 jobs:
   test:
@@ -15,6 +15,8 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' # Adjust the version as necessary
 
       - name: Install Python dev dependencies
         run: sudo apt-get update && sudo apt-get install python3-dev
@@ -27,6 +29,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          export PYO3_PYTHON=python3.8 # Ensure this matches the Python version set up above
           cargo build
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
