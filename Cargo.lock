@@ -1604,7 +1604,6 @@ dependencies = [
 name = "semsimian_server"
 version = "0.1.2"
 dependencies = [
- "cc",
  "chrono",
  "lazy_static",
  "rocket",
