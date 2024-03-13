@@ -1526,9 +1526,9 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "semsimian"
-version = "0.2.13"
+version = "0.2.14-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5d75be153a54252516c7e228d18bd78bcd7e95f0ca0e45f2fe67ff587c39fd1"
+checksum = "daaf10744920495a0661321419779c02938f82e4a5f9988d718b3f24a059bce1"
 dependencies = [
  "cargo-llvm-cov",
  "csv",
