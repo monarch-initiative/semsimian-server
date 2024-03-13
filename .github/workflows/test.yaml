@@ -21,6 +21,9 @@ jobs:
           override: true
           components: rustfmt, clippy
 
+      - name: Install Python 3 Development Headers
+        run: sudo apt-get update && sudo apt-get install python3-dev
+
       - name: Download Phenio
         run: |
           mkdir -p ~/.data/oaklib
