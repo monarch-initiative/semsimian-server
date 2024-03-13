@@ -8,26 +8,33 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.9', '3.12' ]
+        os: [ ubuntu-latest ]
+    runs-on:  ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          rust-toolchain: stable
+          target: 'x86_64'
+          manylinux: auto
+          args: --release --out dist -i ${{ matrix.python-version }}
 
       - name: Download Phenio
         run: |
           mkdir -p ~/.data/oaklib
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
-
-      - name: Install build-essential
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential
-
-      - name: Install Rust
-        uses: ATiltedTree/setup-rust@v1
-        with:
-          rust-version: stable
 
       - name: Run Tests
         run: |
