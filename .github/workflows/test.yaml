@@ -1,4 +1,5 @@
 name: Test SemSimian Server
+
 on:
   push:
     branches: [ main ]
@@ -12,7 +13,7 @@ jobs:
       matrix:
         python-version: [ '3.9', '3.12' ]
         os: [ ubuntu-latest ]
-    runs-on:  ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,6 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+
       - name: Build wheel
         uses: PyO3/maturin-action@v1
         with:
@@ -30,25 +32,15 @@ jobs:
           manylinux: auto
           args: --release --out dist -i ${{ matrix.python-version }}
 
-      - name: Download Phenio
-        run: |
-          mkdir -p ~/.data/oaklib
-          wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
-          gunzip ~/.data/oaklib/phenio.db.gz
-
-      # - name: Run Tests
+      # - name: Download Phenio
       #   run: |
-      #     cargo build --verbose
-      #     cargo test test_compare -- --nocapture
-      #     cargo test test_search -- --nocapture
-      - name: Install built wheel and run all tests (Rust and Python)
+      #     mkdir -p ~/.data/oaklib
+      #     wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
+      #     gunzip ~/.data/oaklib/phenio.db.gz
+
+      - name: Install cargo-llvm-cov and run tests with coverage
         run: |
           cargo install cargo-llvm-cov
           cargo llvm-cov show-env --export-prefix
           cargo llvm-cov clean --workspace
-          # The following commands run all rust tests, just like cargo test
-          # The first version emits a report for further parsing
-          # The second provides a plain-text report to the stdout
-          # cargo llvm-cov --lcov --output-path coverage.lcov
-
           cargo llvm-cov --features ci
