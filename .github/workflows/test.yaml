@@ -19,6 +19,14 @@ jobs:
       - name: Install Python dev dependencies
         run: sudo apt-get update && sudo apt-get install python3-dev
 
+      # Install/Update Rust toolchain
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
       - name: Download Phenio
         run: |
           mkdir -p ~/.data/oaklib
