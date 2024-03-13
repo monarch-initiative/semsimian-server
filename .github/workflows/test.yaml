@@ -36,8 +36,19 @@ jobs:
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
 
-      - name: Run Tests
+      # - name: Run Tests
+      #   run: |
+      #     cargo build --verbose
+      #     cargo test test_compare -- --nocapture
+      #     cargo test test_search -- --nocapture
+      - name: Install built wheel and run all tests (Rust and Python)
         run: |
-          cargo build --verbose
-          cargo test test_compare -- --nocapture
-          cargo test test_search -- --nocapture
+          cargo install cargo-llvm-cov
+          cargo llvm-cov show-env --export-prefix
+          cargo llvm-cov clean --workspace
+          # The following commands run all rust tests, just like cargo test
+          # The first version emits a report for further parsing
+          # The second provides a plain-text report to the stdout
+          # cargo llvm-cov --lcov --output-path coverage.lcov
+
+          cargo llvm-cov --features ci
