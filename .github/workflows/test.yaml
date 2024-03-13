@@ -18,9 +18,16 @@ jobs:
           mkdir -p ~/.data/oaklib
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
-      - name: Check cc version
+
+      - name: Install build-essential
         run: |
-          cc --version
+          sudo apt-get update
+          sudo apt-get install build-essential
+
+      - name: Install Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
 
       - name: Run Tests
         run: |
