@@ -18,9 +18,12 @@ jobs:
           mkdir -p ~/.data/oaklib
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
+      - name: Check cc version
+        run: |
+          cc --version
 
       - name: Run Tests
         run: |
-          cargo build
+          cargo build --verbose
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
