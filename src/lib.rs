@@ -28,7 +28,7 @@ pub fn say_hello() -> &'static str {
 }
 
 #[get("/compare/<termset1>/<termset2>/<metric>")]
-pub fn compare_termsets(termset1: &str, termset2: &str, metric: &str) -> Json<Tsps> {
+pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<&str>) -> Json<Tsps> {
     // split termset1 and termset2 into vectors of TermIDs
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(",") {
@@ -45,7 +45,7 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: &str) -> Json<Ts
         \n",
         terms1, terms2
     );
-    let metric: MetricEnum = MetricEnum::from_string(&Some(metric)).unwrap_or(MetricEnum::AncestorInformationContent);
+    let metric: MetricEnum = MetricEnum::from_string(&metric).unwrap_or(MetricEnum::AncestorInformationContent);
     let result =
         RSS.termset_pairwise_similarity(&terms1, &terms2, &metric);
     Json(result)
@@ -55,7 +55,7 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: &str) -> Json<Ts
 pub fn search(
     termset: &str,
     prefix: &str,
-    metric: &str,
+    metric: Option<&str>,
     limit: Option<usize>,
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
@@ -78,7 +78,7 @@ pub fn search(
         &subject_prefixes,
         &search_type,
         // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
-        &MetricEnum::from_string(&Some(metric)).unwrap_or(MetricEnum::AncestorInformationContent),
+        &MetricEnum::from_string(&metric).unwrap_or(MetricEnum::AncestorInformationContent),
         Some(limit),
     );
     println!("Result - {:?}", result);
