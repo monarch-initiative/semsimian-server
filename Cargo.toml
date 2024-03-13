@@ -13,7 +13,7 @@ name = "semserver"
 path = "src/bin.rs"
 
 [dependencies]
-semsimian = "0.2.14-rc.2"
+semsimian = "=0.2.14-rc.3"
 rocket = {version = "0.5.0", features = ["json"]}
 serde = "*"
 chrono = ">=0.4.31"

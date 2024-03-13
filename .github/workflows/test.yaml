@@ -23,6 +23,8 @@ jobs:
       - name: Check versions
         run: |
           rustup --version
+          rustup update
+          rustup --version
           cargo --version
           rustc --version
           rustup show
@@ -35,6 +37,6 @@ jobs:
 
       - name: Run Tests
         run: |
-          cargo build
+          cargo build --release
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
