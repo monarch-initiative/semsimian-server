@@ -1,5 +1,4 @@
 name: Test SemSimian Server
-
 on:
   push:
     branches: [ main ]
@@ -9,38 +8,25 @@ on:
 jobs:
   test:
     name: Test
-    strategy:
-      matrix:
-        python-version: [ '3.9', '3.12' ]
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
+        uses: actions/setup-python@v2
 
-      - name: Build wheel
-        uses: PyO3/maturin-action@v1
-        with:
-          rust-toolchain: stable
-          target: 'x86_64'
-          manylinux: auto
-          args: --release --out dist -i ${{ matrix.python-version }}
+      - name: Install Python dev dependencies
+        run: sudo apt-get update && sudo apt-get install python3-dev
 
-      # - name: Download Phenio
-      #   run: |
-      #     mkdir -p ~/.data/oaklib
-      #     wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
-      #     gunzip ~/.data/oaklib/phenio.db.gz
-
-      - name: Install cargo-llvm-cov and run tests with coverage
+      - name: Download Phenio
         run: |
-          cargo install cargo-llvm-cov
-          cargo llvm-cov show-env --export-prefix
-          cargo llvm-cov clean --workspace
-          cargo llvm-cov --features ci
+          mkdir -p ~/.data/oaklib
+          wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
+          gunzip ~/.data/oaklib/phenio.db.gz
+
+      - name: Run Tests
+        run: |
+          cargo build
+          cargo test test_compare -- --nocapture
+          cargo test test_search -- --nocapture
