@@ -1,9 +1,9 @@
 name: Test SemSimian Server
 on:
   push:
-    branches: [ main pin_to_py38 ]
+    branches: [ main, pin_to_py38 ]
   pull_request:
-    branches: [ main pin_to_py38 ]
+    branches: [ main, pin_to_py38 ]
 
 
 jobs:
