@@ -30,8 +30,18 @@ jobs:
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
 
+      - name: Install build-essential
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential
+
+      - name: Install Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+
       - name: Run Tests
         run: |
-          cargo build
+          cargo build --verbose
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
