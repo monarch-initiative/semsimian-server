@@ -36,6 +36,6 @@ jobs:
       - name: Run Tests
         run: |
           rustup show
-          cargo build
+          cargo build --release
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
