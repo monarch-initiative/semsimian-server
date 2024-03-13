@@ -5,7 +5,6 @@ on:
   pull_request:
     branches: [ main, pin_to_py38 ]
 
-
 jobs:
   test:
     name: Test
@@ -13,6 +12,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
 
       - name: Download Phenio
         run: |
