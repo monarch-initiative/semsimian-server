@@ -3,15 +3,20 @@
 #[macro_use]
 extern crate rocket;
 
-use semsimian_server::{compare_termsets, search, say_hello};
+use semsimian_server::{compare_termsets, say_hello, search};
 
 #[launch]
 pub fn rocket() -> _ {
-    compare_termsets("HP:0000001,HP:0000002", "HP:0000003,HP:0000004", Some("ancestor_information_content"));
-    search("HP:0000001,HP:0000002", "ZFIN", Some("ancestor_information_content"), Some(1));
-    rocket::build().mount("/", routes![
-        say_hello,
-        compare_termsets,
-        search
-    ])
+    compare_termsets(
+        "HP:0000001,HP:0000002",
+        "HP:0000003,HP:0000004",
+        Some("ancestor_information_content"),
+    );
+    search(
+        "HP:0000001,HP:0000002",
+        "ZFIN",
+        Some("ancestor_information_content"),
+        Some(1),
+    );
+    rocket::build().mount("/", routes![say_hello, compare_termsets, search])
 }

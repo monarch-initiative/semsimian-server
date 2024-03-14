@@ -3,7 +3,11 @@ use semsimian_server::{compare_termsets, search};
 // test compare_termsets function
 #[test]
 fn test_compare() {
-    let response = compare_termsets(&*"MP:0010771".to_string(), &*"HP:0004325".to_string(), Some("ancestor_information_content"));
+    let response = compare_termsets(
+        &*"MP:0010771".to_string(),
+        &*"HP:0004325".to_string(),
+        Some("ancestor_information_content"),
+    );
     let tsps = &response.0;
     let integument_phenotype = "MP:0010771";
     let expected_first_match = String::from("match_source");
