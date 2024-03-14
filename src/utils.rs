@@ -70,11 +70,15 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     type Error = &'a str;
 
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
-        match param {
-            "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
-            "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
-            "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
-            _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
+        // match param {
+        //     "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
+        //     "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
+        //     "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
+        //     _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
+        // }
+        match MetricEnum::from_string(&Some(param)) {
+            Ok(metric) => Ok(MetricEnumWrapper(metric)),
+            Err(_) => Err("Invalid metric"),
         }
     }
 }
