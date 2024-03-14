@@ -75,7 +75,7 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     }
 }
 
-// You may also want to implement Deref so you can use the wrapper type like the original enum
+// Implement Deref so you can use the wrapper type like the original enum
 use std::ops::Deref;
 
 impl Deref for MetricEnumWrapper {
