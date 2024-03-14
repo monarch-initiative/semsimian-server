@@ -7,7 +7,6 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 use rocket::request::FromParam;
 use rocket::serde::json::Json;
-use semsimian::enums::MetricEnum;
 use semsimian::enums::SearchTypeEnum;
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps, TermsetPairwiseSimilarity,
@@ -48,9 +47,11 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<&str>) ->
         \n",
         terms1, terms2
     );
-    let metric: MetricEnum =
-        MetricEnum::from_string(&metric).unwrap_or(MetricEnum::AncestorInformationContent);
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2, &metric);
+    let result = RSS.termset_pairwise_similarity(
+        &terms1,
+        &terms2,
+        &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
+    );
     Json(result)
 }
 
