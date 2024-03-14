@@ -70,8 +70,12 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     type Error = &'a str;
 
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
-        let metric = MetricEnum::from_string(&Some(param)).map_err(|_| "Invalid metric")?;
-        Ok(MetricEnumWrapper(metric))
+        match param {
+            "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
+            "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
+            "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
+            _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
+        }
     }
 }
 
