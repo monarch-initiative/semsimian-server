@@ -5,6 +5,7 @@ use std::collections::HashSet;
 use std::sync::Mutex;
 
 use lazy_static::lazy_static;
+use rocket::request::FromParam;
 use rocket::serde::json::Json;
 use semsimian::enums::SearchTypeEnum;
 use semsimian::termset_pairwise_similarity::{
@@ -13,6 +14,8 @@ use semsimian::termset_pairwise_similarity::{
 use semsimian::{RustSemsimian, TermID};
 
 use utils::get_rss_instance;
+
+use crate::utils::MetricEnumWrapper;
 pub mod utils;
 
 lazy_static! {
@@ -26,15 +29,15 @@ pub fn say_hello() -> &'static str {
     "Semsimian Server Online"
 }
 
-#[get("/compare/<termset1>/<termset2>")]
-pub fn compare_termsets(termset1: &str, termset2: &str) -> Json<Tsps> {
+#[get("/compare/<termset1>/<termset2>/<metric>")]
+pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<&str>) -> Json<Tsps> {
     // split termset1 and termset2 into vectors of TermIDs
     let mut terms1: HashSet<TermID> = HashSet::new();
-    for term in termset1.split(",") {
+    for term in termset1.split(',') {
         terms1.insert(term.to_string());
     }
     let mut terms2: HashSet<TermID> = HashSet::new();
-    for term in termset2.split(",") {
+    for term in termset2.split(',') {
         terms2.insert(term.to_string());
     }
     info!(
@@ -44,14 +47,19 @@ pub fn compare_termsets(termset1: &str, termset2: &str) -> Json<Tsps> {
         \n",
         terms1, terms2
     );
-    let result = RSS.termset_pairwise_similarity(&terms1, &terms2);
+    let result = RSS.termset_pairwise_similarity(
+        &terms1,
+        &terms2,
+        &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
+    );
     Json(result)
 }
 
-#[get("/search/<termset>/<prefix>?<limit>")]
+#[get("/search/<termset>/<prefix>/<metric>?<limit>")]
 pub fn search(
     termset: &str,
     prefix: &str,
+    metric: Option<&str>,
     limit: Option<usize>,
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
@@ -59,7 +67,7 @@ pub fn search(
 
     //populate object_terms HashSet by splitting termset string on commas
     let mut object_terms: HashSet<TermID> = HashSet::new();
-    for term in termset.split(",") {
+    for term in termset.split(',') {
         object_terms.insert(term.to_string());
     }
     let search_type: SearchTypeEnum = SearchTypeEnum::Hybrid;
@@ -73,7 +81,9 @@ pub fn search(
         &None,
         &subject_prefixes,
         &search_type,
-        Some(limit)
+        // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
+        &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
+        Some(limit),
     );
     println!("Result - {:?}", result);
 

@@ -1,6 +1,7 @@
-use semsimian::enums::SearchTypeEnum;
+use semsimian::enums::{MetricEnum, SearchTypeEnum};
 use semsimian::{Predicate, RustSemsimian, TermID};
 // use std::path::{Path, PathBuf};
+use rocket::request::FromParam;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -23,7 +24,7 @@ use std::sync::Mutex;
 //         std::io::copy(&mut resp, &mut out).expect("Failed to write phenio.db");
 //     }
 //     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
-//     return db; 
+//     return db;
 // }
 
 // Get a RustSemsimian instance, ensure phenio.db
@@ -41,9 +42,7 @@ pub fn get_rss_instance() -> RustSemsimian {
     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
     // let db = check_for_phenio();
 
-    let predicates: Option<Vec<Predicate>> = Some(vec![
-        "rdfs:subClassOf".to_string(),
-    ]);
+    let predicates: Option<Vec<Predicate>> = Some(vec!["rdfs:subClassOf".to_string()]);
 
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let rss = Mutex::new(Some(RustSemsimian::new(None, predicates, None, db)));
@@ -61,4 +60,32 @@ pub fn get_rss_instance() -> RustSemsimian {
 
     // Now rss_instance is an Option<RustSemsimian>
     rss_instance.unwrap()
+}
+
+// Define a wrapper type in your own crate
+pub struct MetricEnumWrapper(pub MetricEnum);
+
+// Implement FromParam for your wrapper type
+impl<'a> FromParam<'a> for MetricEnumWrapper {
+    type Error = &'a str;
+
+    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
+        match param {
+            "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
+            "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
+            "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
+            _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
+        }
+    }
+}
+
+// Implement Deref so you can use the wrapper type like the original enum
+use std::ops::Deref;
+
+impl Deref for MetricEnumWrapper {
+    type Target = MetricEnum;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }

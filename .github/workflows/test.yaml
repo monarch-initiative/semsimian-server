@@ -13,14 +13,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+
+      - name: Install Python dev dependencies
+        run: sudo apt-get update && sudo apt-get install python3-dev
+
+      # Install/Update Rust toolchain
+      - name: Check versions
+        run: |
+          rustup --version
+          rustup update
+          rustup --version
+          cargo --version
+          rustc --version
+          rustup show
+
       - name: Download Phenio
         run: |
           mkdir -p ~/.data/oaklib
           wget https://data.monarchinitiative.org/monarch-kg/latest/phenio.db.gz -O ~/.data/oaklib/phenio.db.gz
           gunzip ~/.data/oaklib/phenio.db.gz
-      
+
       - name: Run Tests
         run: |
-          cargo build
+          cargo build --release
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
