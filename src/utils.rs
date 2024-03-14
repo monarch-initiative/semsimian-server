@@ -70,7 +70,7 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     type Error = &'a str;
 
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
-        let metric = MetricEnum::from_string(param).map_err(|_| "Invalid metric")?;
+        let metric = MetricEnum::from_string(&Some(param)).map_err(|_| "Invalid metric")?;
         Ok(MetricEnumWrapper(metric))
     }
 }
