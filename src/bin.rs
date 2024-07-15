@@ -17,6 +17,7 @@ pub fn rocket() -> _ {
         "ZFIN",
         Some("ancestor_information_content"),
         Some(1),
+        Some("bidirectional"),
     );
     rocket::build().mount("/", routes![say_hello, compare_termsets, search])
 }

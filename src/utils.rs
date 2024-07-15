@@ -45,7 +45,7 @@ pub fn get_rss_instance() -> RustSemsimian {
     let predicates: Option<Vec<Predicate>> = Some(vec!["rdfs:subClassOf".to_string()]);
 
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
-    let rss = Mutex::new(Some(RustSemsimian::new(None, predicates, None, db)));
+    let rss = Mutex::new(Some(RustSemsimian::new(None, predicates, None, db, None)));
 
     {
         let mut locked_rss = rss.lock().unwrap();
@@ -79,16 +79,6 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     }
 }
 
-// Implement Deref so you can use the wrapper type like the original enum
-use std::ops::Deref;
-
-impl Deref for MetricEnumWrapper {
-    type Target = MetricEnum;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
 
 pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
 
@@ -102,6 +92,18 @@ impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
             "object_to_subject" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
             _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
         }
+    }
+}
+
+
+// Implement Deref so you can use the wrapper type like the original enum
+use std::ops::Deref;
+
+impl Deref for MetricEnumWrapper {
+    type Target = MetricEnum;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
