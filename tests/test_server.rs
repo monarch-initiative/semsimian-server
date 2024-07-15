@@ -36,5 +36,6 @@ fn test_search() {
         "ZFIN",
         Some("ancestor_information_content"),
         Some(1),
+        Some("bidirectional"),
     );
 }

@@ -16,6 +16,8 @@ use semsimian::{RustSemsimian, TermID};
 use utils::get_rss_instance;
 
 use crate::utils::MetricEnumWrapper;
+use crate::utils::DirectionalityEnumWrapper;
+
 pub mod utils;
 
 lazy_static! {
@@ -55,12 +57,13 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<&str>) ->
     Json(result)
 }
 
-#[get("/search/<termset>/<prefix>/<metric>?<limit>")]
+#[get("/search/<termset>/<prefix>/<metric>?<limit>&<direction>")]
 pub fn search(
     termset: &str,
     prefix: &str,
     metric: Option<&str>,
     limit: Option<usize>,
+    direction: Option<&str>,
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let subject_prefixes: Option<Vec<TermID>> = Some(vec![prefix.to_string()]);
@@ -84,6 +87,7 @@ pub fn search(
         // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
         &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
         Some(limit),
+        &Some(DirectionalityEnumWrapper::from_param(direction.unwrap()).unwrap().0),
     );
     println!("Result - {:?}", result);
 
