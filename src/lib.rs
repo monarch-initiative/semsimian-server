@@ -7,7 +7,7 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 use rocket::request::FromParam;
 use rocket::serde::json::Json;
-use semsimian::enums::SearchTypeEnum;
+use semsimian::enums::{DirectionalityEnum, SearchTypeEnum};
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps, TermsetPairwiseSimilarity,
 };
@@ -16,6 +16,8 @@ use semsimian::{RustSemsimian, TermID};
 use utils::get_rss_instance;
 
 use crate::utils::MetricEnumWrapper;
+use crate::utils::DirectionalityEnumWrapper;
+
 pub mod utils;
 
 lazy_static! {
@@ -61,6 +63,7 @@ pub fn search(
     prefix: &str,
     metric: Option<&str>,
     limit: Option<usize>,
+    direction: Option<&str>
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let subject_prefixes: Option<Vec<TermID>> = Some(vec![prefix.to_string()]);
@@ -84,6 +87,7 @@ pub fn search(
         // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
         &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
         Some(limit),
+        &DirectionalityEnumWrapper::from_param(direction.unwrap()).unwrap()
     );
     println!("Result - {:?}", result);
 

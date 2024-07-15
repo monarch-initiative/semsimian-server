@@ -1,4 +1,4 @@
-use semsimian::enums::{MetricEnum, SearchTypeEnum};
+use semsimian::enums::{DirectionalityEnum, MetricEnum, SearchTypeEnum};
 use semsimian::{Predicate, RustSemsimian, TermID};
 // use std::path::{Path, PathBuf};
 use rocket::request::FromParam;
@@ -84,6 +84,29 @@ use std::ops::Deref;
 
 impl Deref for MetricEnumWrapper {
     type Target = MetricEnum;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
+
+impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
+    type Error = &'a str;
+
+    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
+        match param {
+            "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+            "subject_to_object" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
+            "object_to_subject" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
+            _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+        }
+    }
+}
+
+impl Deref for DirectionalityEnumWrapper {
+    type Target = DirectionalityEnum;
 
     fn deref(&self) -> &Self::Target {
         &self.0
