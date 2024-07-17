@@ -7,7 +7,7 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 use rocket::request::FromParam;
 use rocket::serde::json::Json;
-use semsimian::enums::SearchTypeEnum;
+use semsimian::enums::{DirectionalityEnum, SearchTypeEnum};
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps, TermsetPairwiseSimilarity,
 };
@@ -15,8 +15,8 @@ use semsimian::{RustSemsimian, TermID};
 
 use utils::get_rss_instance;
 
-use crate::utils::MetricEnumWrapper;
 use crate::utils::DirectionalityEnumWrapper;
+use crate::utils::MetricEnumWrapper;
 
 pub mod utils;
 
@@ -76,6 +76,10 @@ pub fn search(
     let search_type: SearchTypeEnum = SearchTypeEnum::Hybrid;
     let limit: usize = limit.unwrap_or(10);
 
+    let direction_enum = direction
+        .map(|d| DirectionalityEnumWrapper::from_param(d).unwrap().0)
+        .unwrap_or(DirectionalityEnum::Bidirectional);
+
     // Call the function under test
     let result = RSS_MUTEX.lock().unwrap().associations_search(
         &assoc_predicate,
@@ -87,7 +91,7 @@ pub fn search(
         // convert metric string to MetricEnum using from_string respecting Option expected by the from_string function
         &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
         Some(limit),
-        &Some(DirectionalityEnumWrapper::from_param(direction.unwrap()).unwrap().0),
+        &Some(direction_enum),
     );
     println!("Result - {:?}", result);
 
