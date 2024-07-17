@@ -92,7 +92,6 @@ pub fn search(
         &MetricEnumWrapper::from_param(metric.unwrap()).unwrap(),
         Some(limit),
         &Some(direction_enum),
-        &Some(DirectionalityEnumWrapper::from_param(direction.unwrap()).unwrap().0),
     );
     println!("Result - {:?}", result);
 
