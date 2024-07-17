@@ -15,8 +15,8 @@ use semsimian::{RustSemsimian, TermID};
 
 use utils::get_rss_instance;
 
-use crate::utils::MetricEnumWrapper;
 use crate::utils::DirectionalityEnumWrapper;
+use crate::utils::MetricEnumWrapper;
 
 pub mod utils;
 

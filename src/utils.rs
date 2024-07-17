@@ -79,7 +79,6 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     }
 }
 
-
 pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
 
 impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
@@ -88,13 +87,16 @@ impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
         match param {
             "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
-            "subject_to_object" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
-            "object_to_subject" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
+            "subject_to_object" => Ok(DirectionalityEnumWrapper(
+                DirectionalityEnum::SubjectToObject,
+            )),
+            "object_to_subject" => Ok(DirectionalityEnumWrapper(
+                DirectionalityEnum::ObjectToSubject,
+            )),
             _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
         }
     }
 }
-
 
 // Implement Deref so you can use the wrapper type like the original enum
 use std::ops::Deref;
