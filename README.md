@@ -9,16 +9,26 @@ A simple web server for the Semsimian project, written in Rust.
     - cargo >= 1.72.1
 
 ### Installation:
+
+The following direct operational procedure may only work under Linux.
+
 1. Clone the repository:
     ```bash
     git clone https://github.com/monarch-initiative/semsimian-server
     ```
-2. Build the project:
+2. Download the source data into the expected location (here we assume *nix commands and use **`wget`**, targeting the **2024-08-12** release. Substitute a more recent release as desired)
+    ```bash
+    mkdir -p .data/oaklib
+    cd .data/oaklib
+    wget https://data.monarchinitiative.org/monarch-kg/2024-08-12/phenio.db.gz
+    gunzip phenio.db.gz
+    ```
+3. Build the project:
     ```bash
     cd semsimian-server
     cargo build 
     ```
-3. Run the server:
+4. Run the server:
     ```bash
     cargo run
     ```
@@ -49,7 +59,7 @@ To build the image, run the following command from the root of the repository:
 docker build -t semsimian-server .
 ```
 
-To run the image, run the following command:
+To run the image on the locally available **phenio.db** data, run the following command:
 ```bash
-docker run -p 9999:9999 semsimian-server
+docker run -p 9999:9999 -v .\.data\oaklib:/usr/src/semsimian_server/.data/oaklib semsimian-server
 ```
