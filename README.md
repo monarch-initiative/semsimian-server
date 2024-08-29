@@ -61,5 +61,5 @@ docker build -t semsimian-server .
 
 To run the image on the locally available **phenio.db** data, run the following command:
 ```bash
-docker run -p 9999:9999 -v .\.data\oaklib:/usr/src/semsimian_server/.data/oaklib semsimian-server
+docker run -p 9999:9999 -v .data/oaklib:/usr/src/semsimian_server/.data/oaklib semsimian-server
 ```
