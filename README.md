@@ -6,9 +6,9 @@ A simple web server for the Semsimian project, written in Rust.
 
 - [Rust](https://www.rust-lang.org/tools/install)
 
-  - rustup >= 1.26.0
-  - rustc >= 1.72.1
-  - cargo >= 1.72.1
+  - rustup >= 1.28
+  - rustc >= 1.87
+  - cargo >= 1.87
 
 ### Installation:
 
