@@ -1,6 +1,6 @@
 [package]
 name = "semsimian_server"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -14,8 +14,7 @@ path = "src/bin.rs"
 
 [dependencies]
 semsimian = "=0.2.19"
-rocket = {version = "0.5.0", features = ["json"]}
+rocket = { version = "0.5.1", features = ["json"] }
 serde = "*"
-chrono = ">=0.4.31"
+chrono = ">=0.4.41"
 lazy_static = { version = ">=1.4.0", features = [] }
-

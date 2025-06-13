@@ -1,4 +1,4 @@
-use semsimian_server::{compare_termsets, search};
+use semsimian_server::{ compare_termsets, search };
 
 // test compare_termsets function
 #[test]
@@ -6,7 +6,7 @@ fn test_compare() {
     let response = compare_termsets(
         "MP:0010771",
         "HP:0004325",
-        Some("ancestor_information_content"),
+        Some(std::path::PathBuf::from("ancestor_information_content"))
     );
     let tsps = &response.0;
     let integument_phenotype = "MP:0010771";
@@ -34,8 +34,8 @@ fn test_search() {
     let _response = search(
         "HP:0000001,HP:0000002",
         "ZFIN",
-        Some("ancestor_information_content"),
+        Some(std::path::PathBuf::from("ancestor_information_content")),
         Some(1),
-        Some("bidirectional"),
+        Some("bidirectional")
     );
 }
