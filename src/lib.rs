@@ -4,6 +4,7 @@ extern crate rocket;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::Mutex;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use lazy_static::lazy_static;
 use rocket::request::FromParam;
@@ -22,8 +23,20 @@ pub mod utils;
 
 lazy_static! {
     static ref RSS: RustSemsimian = get_rss_instance();
-    static ref RSS_MUTEX: Mutex<RustSemsimian> = Mutex::new(get_rss_instance());
+    static ref RSS_POOL: Vec<Mutex<RustSemsimian>> = {
+        let pool_size = num_cpus::get();
+        println!("Creating RSS pool with {} instances", pool_size);
+        (0..pool_size)
+            .map(|_| Mutex::new(get_rss_instance()))
+            .collect()
+    };
     static ref ASSOCIATION_CACHE: HashMap<String, HashSet<String>> = get_association_cache();
+    static ref POOL_COUNTER: AtomicUsize = AtomicUsize::new(0);
+}
+
+fn get_rss_from_pool() -> &'static Mutex<RustSemsimian> {
+    let index = POOL_COUNTER.fetch_add(1, Ordering::Relaxed) % RSS_POOL.len();
+    &RSS_POOL[index]
 }
 
 //--- ROUTES ---//
@@ -88,7 +101,7 @@ pub fn search(
     let default_metric = PathBuf::from("ancestor_information_content");
     let metric_path = metric.unwrap_or(default_metric);
     let metric_str = metric_path.to_str().unwrap();
-    let result = RSS_MUTEX.lock().unwrap().associations_search_with_cache(
+    let result = get_rss_from_pool().lock().unwrap().associations_search_with_cache(
         &assoc_predicate,                                           // object_closure_predicates
         &object_terms,                                              // object_set
         true,                                                       // include_similarity_object

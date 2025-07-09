@@ -1661,6 +1661,8 @@ version = "0.2.2"
 dependencies = [
  "clap",
  "lazy_static",
+ "num_cpus",
+ "rand",
  "rocket",
  "semsimian",
  "serde",
