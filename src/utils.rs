@@ -1,6 +1,6 @@
-use semsimian::enums::{ DirectionalityEnum, MetricEnum, SearchTypeEnum };
-use semsimian::{ Predicate, RustSemsimian, TermID };
 use rocket::request::FromParam;
+use semsimian::enums::{DirectionalityEnum, MetricEnum, SearchTypeEnum};
+use semsimian::{Predicate, RustSemsimian, TermID};
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -86,10 +86,12 @@ impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
         match param {
             "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
-            "subject_to_object" =>
-                Ok(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
-            "object_to_subject" =>
-                Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
+            "subject_to_object" => Ok(DirectionalityEnumWrapper(
+                DirectionalityEnum::SubjectToObject,
+            )),
+            "object_to_subject" => Ok(DirectionalityEnumWrapper(
+                DirectionalityEnum::ObjectToSubject,
+            )),
             _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
         }
     }

@@ -3,21 +3,33 @@
 #[macro_use]
 extern crate rocket;
 
-use semsimian_server::{ compare_termsets, say_hello, search };
+use clap::Parser;
+
+use semsimian_server::{compare_termsets, say_hello, search};
+
+#[derive(Parser)]
+#[command(version, about)]
+struct Cli {}
 
 #[launch]
 pub fn rocket() -> _ {
+    //  Initialize the CLI parser
+    let _cli = Cli::parse();
+
+    // Run a compare and search to initialize Closure and IC maps
     compare_termsets(
         "HP:0000001,HP:0000002",
         "HP:0000003,HP:0000004",
-        Some(std::path::PathBuf::from("ancestor_information_content"))
+        Some(std::path::PathBuf::from("ancestor_information_content")),
     );
     search(
         "HP:0000001,HP:0000002",
         "ZFIN",
         Some(std::path::PathBuf::from("ancestor_information_content")),
         Some(1),
-        Some("bidirectional")
+        Some("bidirectional"),
     );
+
+    // Start the Rocket web server
     rocket::build().mount("/", routes![say_hello, compare_termsets, search])
 }
