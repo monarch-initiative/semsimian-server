@@ -7,14 +7,14 @@ homepage = "https://github.com/monarch-initiative/semsimian-server"
 repository = "https://github.com/monarch-initiative/semsimian-server"
 readme = "README.md"
 license = "BSD-3-Clause"
-authors = ["Glass Ships <glass.ships@outlook.com"]
+authors = ["Glass Ships <glass.ships@protonmail.com"]
 
 [dependencies]
 semsimian = "=0.2.19"
 clap = { version = "4.5.40", features = ["derive"] }
 lazy_static = { version = ">=1.5.0", features = [] }
 rocket = { version = "0.5.1", features = ["json"] }
-serde = "*"
+serde = ">=1.0.219"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
