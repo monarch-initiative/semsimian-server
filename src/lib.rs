@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -14,7 +14,7 @@ use semsimian::termset_pairwise_similarity::{
 };
 use semsimian::{RustSemsimian, TermID};
 
-use crate::utils::get_rss_instance;
+use crate::utils::{get_rss_instance, get_association_cache};
 use crate::utils::DirectionalityEnumWrapper;
 use crate::utils::MetricEnumWrapper;
 
@@ -23,6 +23,7 @@ pub mod utils;
 lazy_static! {
     static ref RSS: RustSemsimian = get_rss_instance();
     static ref RSS_MUTEX: Mutex<RustSemsimian> = Mutex::new(get_rss_instance());
+    static ref ASSOCIATION_CACHE: HashMap<String, HashSet<String>> = get_association_cache();
 }
 
 //--- ROUTES ---//
@@ -87,16 +88,17 @@ pub fn search(
     let default_metric = PathBuf::from("ancestor_information_content");
     let metric_path = metric.unwrap_or(default_metric);
     let metric_str = metric_path.to_str().unwrap();
-    let result = RSS_MUTEX.lock().unwrap().associations_search(
-        &assoc_predicate,
-        &object_terms,
-        true,
-        &None,
-        &subject_prefixes,
-        &search_type,
-        &MetricEnumWrapper::from_param(metric_str).unwrap(),
-        Some(limit),
-        &Some(direction_enum),
+    let result = RSS_MUTEX.lock().unwrap().associations_search_with_cache(
+        &assoc_predicate,                                           // object_closure_predicates
+        &object_terms,                                              // object_set
+        true,                                                       // include_similarity_object
+        &None,                                                      // subject_set
+        &subject_prefixes,                                          // subject_prefixes
+        &search_type,                                               // search_type
+        &MetricEnumWrapper::from_param(metric_str).unwrap(),        // score_metric
+        Some(limit),                                                // limit
+        &Some(direction_enum),                                      // direction
+        &ASSOCIATION_CACHE,                                         // prefix_expansion_cache
     );
     println!("Result - {:?}", result);
 
