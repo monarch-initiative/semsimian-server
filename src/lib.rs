@@ -1,5 +1,4 @@
 #[macro_use]
-extern crate rocket;
 
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -8,11 +7,12 @@ use std::sync::Mutex;
 use lazy_static::lazy_static;
 use rocket::request::FromParam;
 use rocket::serde::json::Json;
-use semsimian::enums::{DirectionalityEnum, SearchTypeEnum};
+use semsimian::enums::{ DirectionalityEnum, SearchTypeEnum };
 use semsimian::termset_pairwise_similarity::{
-    TermsetPairwiseSimilarity as Tsps, TermsetPairwiseSimilarity,
+    TermsetPairwiseSimilarity as Tsps,
+    TermsetPairwiseSimilarity,
 };
-use semsimian::{RustSemsimian, TermID};
+use semsimian::{ RustSemsimian, TermID };
 
 use crate::utils::get_rss_instance;
 use crate::utils::DirectionalityEnumWrapper;
@@ -26,7 +26,7 @@ lazy_static! {
 }
 
 //--- ROUTES ---//
-#[get("/")]
+
 pub fn say_hello() -> &'static str {
     "Semsimian Server Online"
 }
@@ -47,7 +47,8 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<PathBuf>)
         \nTermset 1: {:?}\
         \nTermset 2: {:?}\
         \n",
-        terms1, terms2
+        terms1,
+        terms2
     );
     let default_metric = PathBuf::from("ancestor_information_content");
     let metric_path = metric.unwrap_or(default_metric);
@@ -55,7 +56,7 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<PathBuf>)
     let result = RSS.termset_pairwise_similarity(
         &terms1,
         &terms2,
-        &MetricEnumWrapper::from_param(metric_str).unwrap(),
+        &MetricEnumWrapper::from_param(metric_str).unwrap()
     );
     Json(result)
 }
@@ -66,7 +67,7 @@ pub fn search(
     prefix: &str,
     metric: Option<PathBuf>,
     limit: Option<usize>,
-    direction: Option<&str>,
+    direction: Option<&str>
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let subject_prefixes: Option<Vec<TermID>> = Some(vec![prefix.to_string()]);
@@ -87,25 +88,24 @@ pub fn search(
     let default_metric = PathBuf::from("ancestor_information_content");
     let metric_path = metric.unwrap_or(default_metric);
     let metric_str = metric_path.to_str().unwrap();
-    let result = RSS_MUTEX.lock().unwrap().associations_search(
-        &assoc_predicate,
-        &object_terms,
-        true,
-        &None,
-        &subject_prefixes,
-        &search_type,
-        &MetricEnumWrapper::from_param(metric_str).unwrap(),
-        Some(limit),
-        &Some(direction_enum),
-    );
+    let result = RSS_MUTEX.lock()
+        .unwrap()
+        .associations_search(
+            &assoc_predicate,
+            &object_terms,
+            true,
+            &None,
+            &subject_prefixes,
+            &search_type,
+            &MetricEnumWrapper::from_param(metric_str).unwrap(),
+            Some(limit),
+            &Some(direction_enum)
+        );
     println!("Result - {:?}", result);
 
     // print each entry in the result vector
     for (score, tsps, subject) in result.iter() {
-        println!(
-            "Score: {:?}\nTsps: {:?}\nSubject: {:?}\n",
-            score, tsps, subject
-        );
+        println!("Score: {:?}\nTsps: {:?}\nSubject: {:?}\n", score, tsps, subject);
     }
 
     Json(result)
