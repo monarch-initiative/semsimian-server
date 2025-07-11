@@ -1,6 +1,5 @@
-use rocket::request::FromParam;
-use semsimian::enums::{DirectionalityEnum, MetricEnum, SearchTypeEnum};
-use semsimian::{Predicate, RustSemsimian, TermID};
+use semsimian::enums::{ DirectionalityEnum, MetricEnum, SearchTypeEnum };
+use semsimian::{ Predicate, RustSemsimian, TermID };
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -63,40 +62,35 @@ pub fn get_rss_instance() -> RustSemsimian {
 
 // Define a wrapper type in your own crate
 pub struct MetricEnumWrapper(pub MetricEnum);
-
-// Implement FromParam for your wrapper type
-impl<'a> FromParam<'a> for MetricEnumWrapper {
-    type Error = &'a str;
-
-    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
-        match param {
-            "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
-            "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
-            "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
-            _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
-        }
-    }
-}
-
 pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
 
-impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
-    type Error = &'a str;
+//
+// Implement parsing for MetricEnumWrapper and DirectionalityEnumWrapper without Rocket
+//
 
-    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
+impl MetricEnumWrapper {
+    pub fn from_param(param: &str) -> Option<Self> {
         match param {
-            "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
-            "subject_to_object" => Ok(DirectionalityEnumWrapper(
-                DirectionalityEnum::SubjectToObject,
-            )),
-            "object_to_subject" => Ok(DirectionalityEnumWrapper(
-                DirectionalityEnum::ObjectToSubject,
-            )),
-            _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+            "jaccard_similarity" => Some(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
+            "phenodigm_score" => Some(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
+            "cosine_similarity" => Some(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
+            _ => Some(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
         }
     }
 }
 
+impl DirectionalityEnumWrapper {
+    pub fn from_param(param: &str) -> Option<Self> {
+        match param {
+            "bidirectional" => Some(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+            "subject_to_object" =>
+                Some(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
+            "object_to_subject" =>
+                Some(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
+            _ => Some(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+        }
+    }
+}
 // Implement Deref so you can use the wrapper type like the original enum
 use std::ops::Deref;
 

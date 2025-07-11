@@ -1,18 +1,19 @@
-#[macro_use]
-
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use axum::extract::{ Path, Query, Json };
 use lazy_static::lazy_static;
-use rocket::request::FromParam;
-use rocket::serde::json::Json;
+// use rocket::request::FromParam;
+// use rocket::serde::json::Json;
 use semsimian::enums::{ DirectionalityEnum, SearchTypeEnum };
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps,
     TermsetPairwiseSimilarity,
 };
 use semsimian::{ RustSemsimian, TermID };
+use serde::Deserialize;
+use tracing::info;
 
 use crate::utils::get_rss_instance;
 use crate::utils::DirectionalityEnumWrapper;
@@ -25,14 +26,37 @@ lazy_static! {
     static ref RSS_MUTEX: Mutex<RustSemsimian> = Mutex::new(get_rss_instance());
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CompareParams {
+    pub termset1: String,
+    pub termset2: String,
+    pub metric: Option<String>,
+    // pub metric: Option<PathBuf>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SearchParams {
+    pub termset: String,
+    pub prefix: String,
+    pub metric: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct QueryParams {
+    pub limit: Option<usize>,
+    pub direction: Option<String>,
+}
+
 //--- ROUTES ---//
 
-pub fn say_hello() -> &'static str {
+pub async fn say_hello() -> &'static str {
     "Semsimian Server Online"
 }
 
-#[get("/compare/<termset1>/<termset2>/<metric..>")]
-pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<PathBuf>) -> Json<Tsps> {
+pub async fn compare_termsets(Path(params): Path<CompareParams>) -> Json<Tsps> {
+    // destructure params to get termset1, termset2, and metric
+    let CompareParams { termset1, termset2, metric } = params;
+
     // split termset1 and termset2 into vectors of TermIDs
     let mut terms1: HashSet<TermID> = HashSet::new();
     for term in termset1.split(',') {
@@ -50,25 +74,25 @@ pub fn compare_termsets(termset1: &str, termset2: &str, metric: Option<PathBuf>)
         terms1,
         terms2
     );
-    let default_metric = PathBuf::from("ancestor_information_content");
-    let metric_path = metric.unwrap_or(default_metric);
-    let metric_str = metric_path.to_str().unwrap();
+    // let default_metric = PathBuf::from("ancestor_information_content");
+    let metric = metric.unwrap_or("ancestor_information_content".to_string());
+    // let metric_str = metric.to_str().unwrap();
     let result = RSS.termset_pairwise_similarity(
         &terms1,
         &terms2,
-        &MetricEnumWrapper::from_param(metric_str).unwrap()
+        // &MetricEnumWrapper::from_param(metric_str).unwrap()
+        &MetricEnumWrapper::from_param(&metric).unwrap()
     );
     Json(result)
 }
 
-#[get("/search/<termset>/<prefix>/<metric..>?<limit>&<direction>")]
-pub fn search(
-    termset: &str,
-    prefix: &str,
-    metric: Option<PathBuf>,
-    limit: Option<usize>,
-    direction: Option<&str>
+// #[get("/search/<termset>/<prefix>/<metric..>?<limit>&<direction>")]
+pub async fn search(
+    Path(params): Path<SearchParams>,
+    Query(query_params): Query<QueryParams>
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
+    let SearchParams { termset, prefix, metric } = params;
+    let QueryParams { limit, direction } = query_params;
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
     let subject_prefixes: Option<Vec<TermID>> = Some(vec![prefix.to_string()]);
 
@@ -81,13 +105,11 @@ pub fn search(
     let limit: usize = limit.unwrap_or(10);
 
     let direction_enum = direction
-        .map(|d| DirectionalityEnumWrapper::from_param(d).unwrap().0)
+        .map(|d| DirectionalityEnumWrapper::from_param(&d).unwrap().0)
         .unwrap_or(DirectionalityEnum::Bidirectional);
 
     // Call the function under test
-    let default_metric = PathBuf::from("ancestor_information_content");
-    let metric_path = metric.unwrap_or(default_metric);
-    let metric_str = metric_path.to_str().unwrap();
+    let metric = metric.unwrap_or("ancestor_information_content".to_string());
     let result = RSS_MUTEX.lock()
         .unwrap()
         .associations_search(
@@ -97,7 +119,7 @@ pub fn search(
             &None,
             &subject_prefixes,
             &search_type,
-            &MetricEnumWrapper::from_param(metric_str).unwrap(),
+            &MetricEnumWrapper::from_param(&metric).unwrap(),
             Some(limit),
             &Some(direction_enum)
         );
