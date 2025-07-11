@@ -40,20 +40,13 @@ pub async fn main() -> () {
             direction: Some("bidirectional".to_string()),
         })
     ).await;
-    // search(
-    //     "HP:0000001,HP:0000002",
-    //     "ZFIN",
-    //     Some(std::path::PathBuf::from("ancestor_information_content")),
-    //     Some(1),
-    //     Some("bidirectional")
-    // );
 
-    // Start the Rocket web server
     let app = Router::new()
         .route("/", get(say_hello))
         .route("/compare/{termset1}/{termset2}/{metric}", get(compare_termsets))
         .route("/search/{termset}/{prefix}", get(search));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:9999").await.unwrap();
+    println!("Semsimian Server is live at: https://0.0.0.0:9999");
     axum::serve(listener, app).await.unwrap();
 }

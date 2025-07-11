@@ -1,11 +1,8 @@
 use std::collections::HashSet;
-use std::path::PathBuf;
 use std::sync::Mutex;
 
 use axum::extract::{ Path, Query, Json };
 use lazy_static::lazy_static;
-// use rocket::request::FromParam;
-// use rocket::serde::json::Json;
 use semsimian::enums::{ DirectionalityEnum, SearchTypeEnum };
 use semsimian::termset_pairwise_similarity::{
     TermsetPairwiseSimilarity as Tsps,
@@ -31,7 +28,6 @@ pub struct CompareParams {
     pub termset1: String,
     pub termset2: String,
     pub metric: Option<String>,
-    // pub metric: Option<PathBuf>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -74,19 +70,15 @@ pub async fn compare_termsets(Path(params): Path<CompareParams>) -> Json<Tsps> {
         terms1,
         terms2
     );
-    // let default_metric = PathBuf::from("ancestor_information_content");
     let metric = metric.unwrap_or("ancestor_information_content".to_string());
-    // let metric_str = metric.to_str().unwrap();
     let result = RSS.termset_pairwise_similarity(
         &terms1,
         &terms2,
-        // &MetricEnumWrapper::from_param(metric_str).unwrap()
         &MetricEnumWrapper::from_param(&metric).unwrap()
     );
     Json(result)
 }
 
-// #[get("/search/<termset>/<prefix>/<metric..>?<limit>&<direction>")]
 pub async fn search(
     Path(params): Path<SearchParams>,
     Query(query_params): Query<QueryParams>
@@ -123,11 +115,11 @@ pub async fn search(
             Some(limit),
             &Some(direction_enum)
         );
-    println!("Result - {:?}", result);
+    println!("Result - {result:?}");
 
     // print each entry in the result vector
     for (score, tsps, subject) in result.iter() {
-        println!("Score: {:?}\nTsps: {:?}\nSubject: {:?}\n", score, tsps, subject);
+        println!("Score: {score:?}\nTsps: {tsps:?}\nSubject: {subject:?}\n");
     }
 
     Json(result)
