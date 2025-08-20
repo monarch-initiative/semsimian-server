@@ -1,7 +1,7 @@
 use rocket::request::FromParam;
 use semsimian::enums::{DirectionalityEnum, MetricEnum, SearchTypeEnum};
 use semsimian::{Predicate, RustSemsimian, TermID};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -59,6 +59,21 @@ pub fn get_rss_instance() -> RustSemsimian {
 
     // Now rss_instance is an Option<RustSemsimian>
     rss_instance.unwrap()
+}
+
+pub fn get_association_cache() -> HashMap<String, HashSet<String>> {
+    let rss = get_rss_instance();
+    let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);
+    let subject_prefixes: Option<Vec<TermID>> = None;
+    let subject_set: Option<HashSet<TermID>> = None;
+    let search_type: SearchTypeEnum = SearchTypeEnum::Hybrid;
+    
+    rss.generate_associations_cache(
+        &assoc_predicate,
+        &subject_set,
+        &subject_prefixes,
+        &search_type,
+    )
 }
 
 // Define a wrapper type in your own crate

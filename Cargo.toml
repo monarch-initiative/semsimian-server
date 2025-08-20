@@ -10,11 +10,13 @@ license = "BSD-3-Clause"
 authors = ["Glass Ships <glass.ships@protonmail.com"]
 
 [dependencies]
-semsimian = "=0.2.19"
+semsimian = { git = "https://github.com/monarch-initiative/semsimian.git", branch = "association-search-with-cache" }
 clap = { version = "4.5.40", features = ["derive"] }
 lazy_static = { version = ">=1.5.0", features = [] }
 rocket = { version = "0.5.1", features = ["json"] }
 serde = ">=1.0.219"
+num_cpus = "1.0"
+rand = "0.8"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
