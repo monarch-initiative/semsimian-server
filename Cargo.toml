@@ -1,3 +1,4 @@
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [package]
 name = "semsimian_server"
 description = "A server for SemSimian, a semantic similarity service for biomedical ontologies"
@@ -14,12 +15,16 @@ semsimian = "=0.2.19"
 clap = { version = ">=4.5.40", features = ["derive"] }
 lazy_static = { version = ">=1.5.0", features = [] }
 serde = ">=1.0.219"
+# Web server dependencies
 axum = ">=0.8.4"
 tokio = { version = ">=1.46.1", features = ["full"] }
 tower = ">=0.5.2"
 tracing = { version = ">=0.1.41", features = ["log"] }
+# For downloading phenio
+reqwest = { version = ">=0.12.22", features = ["blocking"] }
+flate2 = "1.1.2"
+tar = "0.4.44"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
 name = "semsimian_server"
 path = "src/lib.rs"

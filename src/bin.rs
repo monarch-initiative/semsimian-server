@@ -10,6 +10,7 @@ use semsimian_server::{
     CompareParams,
     SearchParams,
     QueryParams,
+    utils::check_for_phenio,
 };
 
 #[derive(Parser)]
@@ -20,6 +21,9 @@ struct Cli {}
 pub async fn main() -> () {
     //  Initialize the CLI parser
     let _cli = Cli::parse();
+
+    // Check for phenio.db, download if missing
+    check_for_phenio();
 
     // Run a compare and search to initialize Closure and IC maps
     let _ = compare_termsets(
