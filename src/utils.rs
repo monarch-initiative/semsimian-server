@@ -2,7 +2,6 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use rocket::request::FromParam;
 use semsimian::enums::{ DirectionalityEnum, MetricEnum, SearchTypeEnum };
 use semsimian::{ Predicate, RustSemsimian, TermID };
 use flate2::read::GzDecoder;
@@ -27,7 +26,7 @@ pub fn check_for_phenio() {
         let response = reqwest::blocking
             ::get(PHENIO_DB_URL)
             .expect("Failed to download phenio.db.gz");
-
+        
         // Create the directory if it doesn't exist
         std::fs::create_dir_all(db_path.parent().unwrap()).expect("Failed to create directory");
 
@@ -79,31 +78,30 @@ pub fn get_rss_instance() -> RustSemsimian {
 pub struct MetricEnumWrapper(pub MetricEnum);
 pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
 
-// Implement FromParam for our wrappers
-impl<'a> FromParam<'a> for MetricEnumWrapper {
-    type Error = &'a str;
+/**
+ * Implement parsing for MetricEnumWrapper and DirectionalityEnumWrapper
+ */
 
-    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
+impl MetricEnumWrapper {
+    pub fn from_param(param: &str) -> Option<Self> {
         match param {
-            "jaccard_similarity" => Ok(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
-            "phenodigm_score" => Ok(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
-            "cosine_similarity" => Ok(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
-            _ => Ok(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
+            "jaccard_similarity" => Some(MetricEnumWrapper(MetricEnum::JaccardSimilarity)),
+            "phenodigm_score" => Some(MetricEnumWrapper(MetricEnum::PhenodigmScore)),
+            "cosine_similarity" => Some(MetricEnumWrapper(MetricEnum::CosineSimilarity)),
+            _ => Some(MetricEnumWrapper(MetricEnum::AncestorInformationContent)),
         }
     }
 }
 
-impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
-    type Error = &'a str;
-
-    fn from_param(param: &'a str) -> Result<Self, Self::Error> {
+impl DirectionalityEnumWrapper {
+    pub fn from_param(param: &str) -> Option<Self> {
         match param {
-            "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+            "bidirectional" => Some(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
             "subject_to_object" =>
-                Ok(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
+                Some(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
             "object_to_subject" =>
-                Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
-            _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
+                Some(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
+            _ => Some(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
         }
     }
 }
