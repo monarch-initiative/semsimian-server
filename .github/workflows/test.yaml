@@ -37,7 +37,6 @@ jobs:
 
       - name: Run Tests
         run: |
-          # cargo build --release
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
 
