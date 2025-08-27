@@ -83,6 +83,15 @@ pub async fn search(
     Path(params): Path<SearchParams>,
     Query(query_params): Query<QueryParams>
 ) -> Json<Vec<(f64, Option<TermsetPairwiseSimilarity>, TermID)>> {
+    // print path and query params
+    println!(
+        "\nSearch called with params:\
+        \nPath Params: {:?}\
+        \nQuery Params: {:?}\
+        \n",
+        params,
+        query_params
+    );
     let SearchParams { termset, prefix, metric } = params;
     let QueryParams { limit, direction } = query_params;
     let assoc_predicate: HashSet<TermID> = HashSet::from(["biolink:has_phenotype".to_string()]);

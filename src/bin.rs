@@ -23,9 +23,11 @@ pub async fn main() -> () {
     let _cli = Cli::parse();
 
     // Check for phenio.db, download if missing
-    tokio::task::spawn_blocking(|| {
-        check_for_phenio();
-    }).await.unwrap();
+    tokio::task
+        ::spawn_blocking(|| {
+            check_for_phenio();
+        }).await
+        .unwrap();
 
     // Run a compare and search to initialize Closure and IC maps
     let _ = compare_termsets(
@@ -50,9 +52,9 @@ pub async fn main() -> () {
     let app = Router::new()
         .route("/", get(say_hello))
         .route("/compare/{termset1}/{termset2}/{metric}", get(compare_termsets))
-        .route("/search/{termset}/{prefix}", get(search));
+        .route("/search/{termset}/{prefix}/{metric}", get(search));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:9999").await.unwrap();
-    println!("Semsimian Server is live at: https://0.0.0.0:9999");
+    println!("Semsimian Server is live at: http://localhost:9999");
     axum::serve(listener, app).await.unwrap();
 }
