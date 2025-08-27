@@ -99,5 +99,5 @@ The server exposes two endpoints:
     `bidirectional`, `subject_to_object`, `object_to_subject`
 
 Examples:
-`http://localhost:18811/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content`
-`http://localhost:18811/search/HP:0000001,HP:0000002/zfin/ancestor_information_content`
+`http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content`
+`http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content`
