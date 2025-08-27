@@ -26,7 +26,7 @@ pub fn check_for_phenio() {
         let response = reqwest::blocking
             ::get(PHENIO_DB_URL)
             .expect("Failed to download phenio.db.gz");
-
+        
         // Create the directory if it doesn't exist
         std::fs::create_dir_all(db_path.parent().unwrap()).expect("Failed to create directory");
 

@@ -23,7 +23,9 @@ pub async fn main() -> () {
     let _cli = Cli::parse();
 
     // Check for phenio.db, download if missing
-    check_for_phenio();
+    tokio::task::spawn_blocking(|| {
+        check_for_phenio();
+    }).await.unwrap();
 
     // Run a compare and search to initialize Closure and IC maps
     let _ = compare_termsets(
