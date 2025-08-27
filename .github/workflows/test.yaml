@@ -1,13 +1,13 @@
 name: Test SemSimian Server
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
-    name: Test
+    name: Run cargo tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,6 +37,16 @@ jobs:
 
       - name: Run Tests
         run: |
-          cargo build --release
           cargo test test_compare -- --nocapture
           cargo test test_search -- --nocapture
+
+  build-docker:
+    name: Test Building Docker Image
+    runs-on: ubuntu-latest
+    # skip on pushes to main
+    if: github.ref != 'refs/heads/main'
+    steps:
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: false
