@@ -2,7 +2,7 @@
 [package]
 name = "semsimian_server"
 description = "A server for SemSimian, a semantic similarity service for biomedical ontologies"
-version = "0.2.3"
+version = "0.2.4"
 edition = "2024"
 homepage = "https://github.com/monarch-initiative/semsimian-server"
 repository = "https://github.com/monarch-initiative/semsimian-server"

@@ -51,6 +51,10 @@ pub async fn main() -> () {
 
     let app = Router::new()
         .route("/", get(say_hello))
+        // routes without metric provided
+        .route("/compare/{termset1}/{termset2}", get(compare_termsets))
+        .route("/search/{termset}/{prefix}", get(search))
+        // routes with metric
         .route("/compare/{termset1}/{termset2}/{metric}", get(compare_termsets))
         .route("/search/{termset}/{prefix}/{metric}", get(search));
 
