@@ -1,7 +1,7 @@
 [package]
 name = "semsimian_server"
 description = "A server for SemSimian, a semantic similarity service for biomedical ontologies"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2024"
 homepage = "https://github.com/monarch-initiative/semsimian-server"
 repository = "https://github.com/monarch-initiative/semsimian-server"
@@ -11,12 +11,12 @@ authors = ["Glass Ships <glass.ships@protonmail.com"]
 
 [dependencies]
 semsimian = "=0.2.19"
-clap = { version = "4.5.40", features = ["derive"] }
+clap = { version = "4.5.46", features = ["derive"] }
 lazy_static = { version = ">=1.5.0", features = [] }
 rocket = { version = "0.5.1", features = ["json"] }
 serde = ">=1.0.219"
 # For downloading phenio
-reqwest = { version = ">=0.12.22", features = ["blocking"] }
+reqwest = { version = ">=0.12.23", features = ["blocking"] }
 flate2 = "1.1.2"
 tar = "0.4.44"
 

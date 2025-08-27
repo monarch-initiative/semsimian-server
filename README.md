@@ -7,8 +7,8 @@ A simple web server for the Semsimian project, written in Rust.
 - [Rust](https://www.rust-lang.org/tools/install)
 
   - rustup >= 1.28
-  - rustc >= 1.87
-  - cargo >= 1.87
+  - rustc >= 1.89
+  - cargo >= 1.89
 
 ## Installation:
 
@@ -75,7 +75,7 @@ docker run -p 9999:9999 semsimian-server
 
 ## Usage:
 
-In debug mode (ie. `cargo build`), the server will be running on `http://localhost:18811`.  
+In debug mode (ie. `cargo build`), the server will be running on `http://localhost:9999`.  
 The address and port can be configured in the `Rocket.toml` file, or by setting the `ROCKET_ADDRESS` and `ROCKET_PORT` environment variables.
 
 The server exposes two endpoints:
@@ -99,5 +99,5 @@ The server exposes two endpoints:
     `bidirectional`, `subject_to_object`, `object_to_subject`
 
 Examples:
-`http://localhost:18811/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content`
-`http://localhost:18811/search/HP:0000001,HP:0000002/zfin/ancestor_information_content`
+`http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content`
+`http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content?limit=5&direction=bidirectional`
