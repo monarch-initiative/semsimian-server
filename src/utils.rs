@@ -1,30 +1,44 @@
-use rocket::request::FromParam;
-use semsimian::enums::{DirectionalityEnum, MetricEnum, SearchTypeEnum};
-use semsimian::{Predicate, RustSemsimian, TermID};
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-// Check for phenio.db in ~/.data/oaklib, download if not present
-// const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
+use rocket::request::FromParam;
+use semsimian::enums::{ DirectionalityEnum, MetricEnum, SearchTypeEnum };
+use semsimian::{ Predicate, RustSemsimian, TermID };
+use flate2::read::GzDecoder;
 
-// pub fn check_for_phenio() {
-//     let mut db_path = PathBuf::new();
-//     if let Some(home) = std::env::var_os("HOME") {
-//         db_path.push(home);
-//         db_path.push(".data/oaklib/phenio.db.gz");
-//     } else {
-//         panic!("Failed to get home directory");
-//     }
-//     if !db_path.exists() {
-//         println!("Downloading phenio.db");
-//         let mut resp = reqwest::blocking::get(PHENIO_DB_URL).expect("Failed to download phenio.db");
-//         let mut out = std::fs::File::create(&db_path).expect("Failed to create phenio.db");
-//         std::io::copy(&mut resp, &mut out).expect("Failed to write phenio.db");
-//     }
-//     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
-//     return db;
-// }
+// Check for phenio.db in ~/.data/oaklib, download if not present
+const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
+
+pub fn check_for_phenio() {
+    let mut db_path = PathBuf::new();
+    if let Some(home) = std::env::var_os("HOME") {
+        db_path.push(home);
+        db_path.push(".data/oaklib/phenio.db");
+    } else {
+        panic!("Failed to get home directory");
+    }
+
+    if db_path.exists() {
+        println!("phenio.db found, launching server");
+    } else {
+        println!("phenio.db not found, downloading from {}", PHENIO_DB_URL);
+        // Download the phenio.db.gz file
+        let response = reqwest::blocking
+            ::get(PHENIO_DB_URL)
+            .expect("Failed to download phenio.db.gz");
+
+        // Create the directory if it doesn't exist
+        std::fs::create_dir_all(db_path.parent().unwrap()).expect("Failed to create directory");
+
+        // Unpack the .gz
+        let mut gz = GzDecoder::new(response);
+        let mut out_file = std::fs::File
+            ::create(&db_path)
+            .expect("Failed to create phenio.db file");
+        std::io::copy(&mut gz, &mut out_file).expect("Failed to write phenio.db file");
+    }
+}
 
 // Get a RustSemsimian instance, ensure phenio.db
 pub fn get_rss_instance() -> RustSemsimian {
@@ -61,10 +75,11 @@ pub fn get_rss_instance() -> RustSemsimian {
     rss_instance.unwrap()
 }
 
-// Define a wrapper type in your own crate
+// Define a wrapper type for Semsimian MetricEnum and DirectionalityEnum
 pub struct MetricEnumWrapper(pub MetricEnum);
+pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
 
-// Implement FromParam for your wrapper type
+// Implement FromParam for our wrappers
 impl<'a> FromParam<'a> for MetricEnumWrapper {
     type Error = &'a str;
 
@@ -78,20 +93,16 @@ impl<'a> FromParam<'a> for MetricEnumWrapper {
     }
 }
 
-pub struct DirectionalityEnumWrapper(pub DirectionalityEnum);
-
 impl<'a> FromParam<'a> for DirectionalityEnumWrapper {
     type Error = &'a str;
 
     fn from_param(param: &'a str) -> Result<Self, Self::Error> {
         match param {
             "bidirectional" => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
-            "subject_to_object" => Ok(DirectionalityEnumWrapper(
-                DirectionalityEnum::SubjectToObject,
-            )),
-            "object_to_subject" => Ok(DirectionalityEnumWrapper(
-                DirectionalityEnum::ObjectToSubject,
-            )),
+            "subject_to_object" =>
+                Ok(DirectionalityEnumWrapper(DirectionalityEnum::SubjectToObject)),
+            "object_to_subject" =>
+                Ok(DirectionalityEnumWrapper(DirectionalityEnum::ObjectToSubject)),
             _ => Ok(DirectionalityEnumWrapper(DirectionalityEnum::Bidirectional)),
         }
     }

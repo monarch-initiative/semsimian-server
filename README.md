@@ -13,7 +13,9 @@ A simple web server for the Semsimian project, written in Rust.
 ## Installation:
 
 0. Semsimian Server requires a local copy of the Phenio DB.  
-   Download a copy of `phenio.db.gz` from https://data.monarchinitiative.org and unpack it into `$HOME/.data/oaklib`:
+   It will check for the existence of `$HOME/.data.oaklib/phenio.db`, and **automatically download the latest version** if it is missing.  
+   However, if you wish to use a specific version, you may manually download a copy of `phenio.db.gz`  
+   from https://data.monarchinitiative.org and unpack it into `$HOME/.data/oaklib`:
 
    ```bash
    mkdir -p ~/.data/oaklib
