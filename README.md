@@ -7,8 +7,8 @@ A simple web server for the Semsimian project, written in Rust.
 - [Rust](https://www.rust-lang.org/tools/install)
 
   - rustup >= 1.28
-  - rustc >= 1.87
-  - cargo >= 1.87
+  - rustc >= 1.89
+  - cargo >= 1.89
 
 ## Installation:
 
@@ -75,7 +75,7 @@ docker run -p 9999:9999 semsimian-server
 
 ## Usage:
 
-In debug mode (ie. `cargo build`), the server will be running on `http://localhost:18811`.  
+In debug mode (ie. `cargo build`), the server will be running on `http://localhost:9999`.  
 The address and port can be configured in the `Rocket.toml` file, or by setting the `ROCKET_ADDRESS` and `ROCKET_PORT` environment variables.
 
 The server exposes two endpoints:
