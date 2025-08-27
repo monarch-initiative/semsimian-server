@@ -2,9 +2,9 @@ name: Build and Deploy Docker Image
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   release:
     types: [published]
 
