@@ -13,12 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-
-      - name: Install Python dev dependencies
-        run: sudo apt-get update && sudo apt-get install python3-dev
-
       # Install/Update Rust toolchain
       - name: Check versions
         run: |
@@ -47,6 +41,6 @@ jobs:
     if: github.ref != 'refs/heads/main'
     steps:
       - name: Build Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: false
