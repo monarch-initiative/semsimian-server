@@ -100,7 +100,7 @@ The server exposes two endpoints:
 
 Example endpoints:
 
-- http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content
-- http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content?limit=5&direction=bidirectional
+- http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004
 - http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/jaccard_similarity
+- http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content?limit=5&direction=bidirectional
 - http://localhost:9999/search/HP:0000001,HP:0000002/zfin?limit=3&direction=bidirectional
