@@ -84,16 +84,22 @@ The server exposes two endpoints:
   Returns a JSON object containing the similarity score between the two termsets.
 
   - `termset1` and `termset2`: comma-separated lists of ontology terms.
-  - `metric`: the similarity method to use, one of:  
-    `ancestor_information_content`, `jaccard_similarity`, `phenodigm_score`, `cosine_similarity`
+  - `metric`: (optional) the similarity method to use, one of:
+    - `ancestor_information_content` (**default**)
+    - `jaccard_similarity`
+    - `phenodigm_score`
+    - `cosine_similarity`  
 
 - `/search/<termset>/<prefix>/<metric>?<limit>&<direction>`:  
   Returns a JSON object containing a list of ontology terms that match the search term and prefix.
 
   - `termset`: comma-separated list of ontology terms.
   - `prefix`: string that will be used to filter the results.
-  - `metric`: the similarity method to use, one of:  
-    `ancestor_information_content`, `jaccard_similarity`, `phenodigm_score`, `cosine_similarity`
+  - `metric`: (optional) the similarity method to use, one of:
+    - `ancestor_information_content` (**default**)
+    - `jaccard_similarity`
+    - `phenodigm_score`
+    - `cosine_similarity`  
   - `limit`: number, limit the number of results
   - `direction`: the direction of the associations to search for, one of:  
     `bidirectional`, `subject_to_object`, `object_to_subject`
