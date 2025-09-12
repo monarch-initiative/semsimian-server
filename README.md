@@ -84,20 +84,29 @@ The server exposes two endpoints:
   Returns a JSON object containing the similarity score between the two termsets.
 
   - `termset1` and `termset2`: comma-separated lists of ontology terms.
-  - `metric`: the similarity method to use, one of:  
-    `ancestor_information_content`, `jaccard_similarity`, `phenodigm_score`, `cosine_similarity`
+  - `metric`: (optional) the similarity method to use, one of:
+    - `ancestor_information_content` (**default**)
+    - `jaccard_similarity`
+    - `phenodigm_score`
+    - `cosine_similarity`  
 
 - `/search/<termset>/<prefix>/<metric>?<limit>&<direction>`:  
   Returns a JSON object containing a list of ontology terms that match the search term and prefix.
 
   - `termset`: comma-separated list of ontology terms.
   - `prefix`: string that will be used to filter the results.
-  - `metric`: the similarity method to use, one of:  
-    `ancestor_information_content`, `jaccard_similarity`, `phenodigm_score`, `cosine_similarity`
+  - `metric`: (optional) the similarity method to use, one of:
+    - `ancestor_information_content` (**default**)
+    - `jaccard_similarity`
+    - `phenodigm_score`
+    - `cosine_similarity`  
   - `limit`: number, limit the number of results
   - `direction`: the direction of the associations to search for, one of:  
     `bidirectional`, `subject_to_object`, `object_to_subject`
 
-Examples:
-`http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/ancestor_information_content`
-`http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content?limit=5&direction=bidirectional`
+Example endpoints:
+
+- http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004
+- http://localhost:9999/compare/HP:0000001,HP:0000002/HP:0000003,HP:0000004/jaccard_similarity
+- http://localhost:9999/search/HP:0000001,HP:0000002/zfin/ancestor_information_content?limit=5&direction=bidirectional
+- http://localhost:9999/search/HP:0000001,HP:0000002/zfin?limit=3&direction=bidirectional

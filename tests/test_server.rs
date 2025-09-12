@@ -1,13 +1,16 @@
-use semsimian_server::{ compare_termsets, search };
+use axum::extract::{ Path, Query };
+use semsimian_server::{ compare_termsets, search, CompareParams, QueryParams, SearchParams };
 
 // test compare_termsets function
-#[test]
-fn test_compare() {
+#[tokio::test]
+async fn test_compare() {
     let response = compare_termsets(
-        "MP:0010771",
-        "HP:0004325",
-        Some(std::path::PathBuf::from("ancestor_information_content"))
-    );
+        Path(CompareParams {
+            termset1: "MP:0010771".to_string(),
+            termset2: "HP:0004325".to_string(),
+            metric: Some("jaccard_similarity".to_string()),
+        })
+    ).await;
     let tsps = &response.0;
     let integument_phenotype = "MP:0010771";
     let expected_first_match = String::from("match_source");
@@ -32,10 +35,11 @@ fn test_compare() {
 #[test]
 fn test_search() {
     let _response = search(
-        "HP:0000001,HP:0000002",
-        "ZFIN",
-        Some(std::path::PathBuf::from("ancestor_information_content")),
-        Some(1),
-        Some("bidirectional")
+        Path(SearchParams {
+            termset: "HP:0000001,HP:0000002".to_string(),
+            prefix: "ZFIN".to_string(),
+            metric: Some("ancestor_information_content".to_string()),
+        }),
+        Query(QueryParams { limit: Some(1), direction: Some("bidirectional".to_string()) })
     );
 }
