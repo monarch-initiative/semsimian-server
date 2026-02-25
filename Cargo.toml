@@ -2,7 +2,7 @@
 [package]
 name = "semsimian_server"
 description = "A server for SemSimian, a semantic similarity service for biomedical ontologies"
-version = "0.2.4"
+version = "0.2.5"
 edition = "2024"
 homepage = "https://github.com/monarch-initiative/semsimian-server"
 repository = "https://github.com/monarch-initiative/semsimian-server"
@@ -11,18 +11,18 @@ license = "BSD-3-Clause"
 authors = ["Glass Ships <glass.ships@protonmail.com"]
 
 [dependencies]
-semsimian = "=0.2.19"
-clap = { version = ">=4.5.46", features = ["derive"] }
+semsimian = "0.3.0"
+clap = { version = ">=4.5.60", features = ["derive"] }
 lazy_static = { version = ">=1.5.0", features = [] }
-serde = ">=1.0.219"
+serde = { version = ">=1.0.228", features = ["derive"] }
 # Web server dependencies
-axum = ">=0.8.4"
-tokio = { version = ">=1.47.1", features = ["full"] }
-tower = ">=0.5.2"
-tracing = { version = ">=0.1.41", features = ["log"] }
+axum = ">=0.8.8"
+tokio = { version = ">=1.49.0", features = ["full"] }
+tower = ">=0.5.3"
+tracing = { version = ">=0.1.44", features = ["log"] }
 # For downloading phenio
-reqwest = { version = ">=0.12.23", features = ["blocking"] }
-flate2 = "1.1.2"
+reqwest = { version = ">=0.13.2", features = ["blocking"] }
+flate2 = "1.1.9"
 tar = "0.4.44"
 
 [lib]
@@ -31,4 +31,4 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "semserver"
-path = "src/bin.rs"
+path = "src/main.rs"
