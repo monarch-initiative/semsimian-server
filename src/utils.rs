@@ -6,31 +6,36 @@ use semsimian::enums::{ DirectionalityEnum, MetricEnum, SearchTypeEnum };
 use semsimian::{ Predicate, RustSemsimian, TermID };
 use flate2::read::GzDecoder;
 
-// Check for phenio.db in ~/.data/oaklib, download if not present
 const PHENIO_DB_URL: &str = "https://data.monarchinitiative.org/monarch-kg-dev/latest/phenio.db.gz";
 
-pub fn check_for_phenio() {
-    let mut db_path = PathBuf::new();
-    if let Some(home) = std::env::var_os("HOME") {
-        db_path.push(home);
-        db_path.push(".data/oaklib/phenio.db");
+/// Resolve the phenio.db path: PHENIO_PATH env var takes priority,
+/// otherwise fall back to $HOME/.data/oaklib/phenio.db.
+fn resolve_phenio_path() -> PathBuf {
+    if let Some(phenio_path) = std::env::var_os("PHENIO_PATH") {
+        PathBuf::from(phenio_path)
+    } else if let Some(home) = std::env::var_os("HOME") {
+        let mut p = PathBuf::from(home);
+        p.push(".data/oaklib/phenio.db");
+        p
     } else {
-        panic!("Failed to get home directory");
+        panic!("Neither PHENIO_PATH nor HOME is set");
     }
+}
+
+/// Check for phenio.db at the resolved path, download if not present.
+pub fn check_for_phenio() {
+    let db_path = resolve_phenio_path();
 
     if db_path.exists() {
-        println!("phenio.db found, launching server");
+        println!("phenio.db found at {}, launching server", db_path.display());
     } else {
-        println!("phenio.db not found, downloading from {}", PHENIO_DB_URL);
-        // Download the phenio.db.gz file
+        println!("phenio.db not found at {}, downloading from {}", db_path.display(), PHENIO_DB_URL);
         let response = reqwest::blocking
             ::get(PHENIO_DB_URL)
             .expect("Failed to download phenio.db.gz");
-        
-        // Create the directory if it doesn't exist
+
         std::fs::create_dir_all(db_path.parent().unwrap()).expect("Failed to create directory");
 
-        // Unpack the .gz
         let mut gz = GzDecoder::new(response);
         let mut out_file = std::fs::File
             ::create(&db_path)
@@ -39,18 +44,8 @@ pub fn check_for_phenio() {
     }
 }
 
-// Get a RustSemsimian instance, ensure phenio.db
 pub fn get_rss_instance() -> RustSemsimian {
-    let mut db_path = PathBuf::new();
-    //if PHENIO_PATH is in the environment, use that as db_path, else use ~/.data/oaklib/phenio.db
-    if let Some(phenio_path) = std::env::var_os("PHENIO_PATH") {
-        db_path.push(phenio_path);
-    } else if let Some(home) = std::env::var_os("HOME") {
-        db_path.push(home);
-        db_path.push(".data/oaklib/phenio.db");
-    } else {
-        panic!("Failed to get home directory");
-    }
+    let db_path = resolve_phenio_path();
     let db = Some(db_path.to_str().expect("Failed to convert path to string"));
     // let db = check_for_phenio();
 
